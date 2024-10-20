@@ -1,5 +1,6 @@
 #include "q2.h"
 #include "q34.h"
+#include <cmath>
 
 // constructor
 Plane::Plane() {
@@ -22,7 +23,7 @@ Plane::~Plane() {
 
 // operate function
 void Plane::operate(double dt) {
-    if (pos < distance_map[origin][destination]) {
+    if (round(pos) < distance_map[origin][destination]) {
         pos += vel/3600 * dt;
         at_SCE = 0;
     } else {
