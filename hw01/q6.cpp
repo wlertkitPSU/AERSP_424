@@ -3,7 +3,7 @@
 
 // constructor
 Pilot::Pilot(string pilotName) : name(pilotName){
-    cout << "Pilot " << getName() << ", ID: " << this << ", is at the gate and ready to board the plane";
+    cout << "Pilot " << getName() << ", ID: " << this << ", is at the gate and ready to board the plane" << endl;
 };
 
 // destructor
