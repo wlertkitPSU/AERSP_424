@@ -35,7 +35,6 @@ void Plane::operate(double dt) {
             origin = destination;
             destination = temp;
             pos = 0.0;
-            at_SCE = 1;
         }
     }
 }

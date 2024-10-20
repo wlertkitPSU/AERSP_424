@@ -8,26 +8,20 @@ int main(){
     Plane myplane;
 
     // Setting the plane's velocity (in miles per hour)
-    double velocity;
-    cout << "Enter the plane's velocity between 400 mph and 500 mph: ";
-    cin >> velocity;
+    double velocity = 400;
     myplane.setVelocity(velocity);
 
     // Setting the timestep
-    double timestep;
-    cout << "Enter the timestep between 10 and 100 seconds: ";
-    cin >> timestep;
+    double timestep = 10;
 
     // Setting the number of iterations
-    double maxiterations;
-    cout << "Enter the maximum number of iterations between 1000 and 2000: ";
-    cin >> maxiterations;
+    double maxiterations = 1000;
 
     // while loop, terminates when plane reaches destination
     int i = 0;
-    while (myplane.getAt_SCE() == 0 && i <= maxiterations){
+    while (myplane.getDestination() != "SCE" && i <= maxiterations){
         myplane.operate(timestep);
-        if (myplane.getAt_SCE() == 0){
+        if (myplane.getDestination() != "SCE"){
             cout << "Time:" << " " << timestep * i << " seconds, " << "Positon: " << myplane.getPosition() << " " <<"miles" << endl;
         }
         ++i;
