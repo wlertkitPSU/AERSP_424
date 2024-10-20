@@ -3,18 +3,21 @@
 
 // constructor
 Plane::Plane() {
-    cin >> origin >> destination;
+    cout << "Enter Origin: ";
+    cin >> origin;
+    cout << "Enter Destination: ";
+    cin >> destination;
     distance_map = distance_init();
     pos = 0;
     vel = 0;
     at_SCE = 0;
     distance = distance_map[origin][destination];
-    cout << "Plane Created at [adress]";
+    cout << "Plane created at memory address" << this << endl;
 }
 
 // destructor
 Plane::~Plane() {
-    cout << "Plane Destroyed" << endl;
+    cout << "Plane destroyed" << endl;
 }
 
 // operate function
