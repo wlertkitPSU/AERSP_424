@@ -23,10 +23,16 @@ int main(){
     cout << "Enter the maximum number of iterations between 1000 and 2000: ";
     cin >> maxiterations;
 
-    for (double i = 0; i < maxiterations; ++i){
+    // while loop, terminates when plane reaches destination
+    int i = 0;
+    while (myplane.getAt_SCE() == 0 && i <= maxiterations){
         myplane.operate(timestep);
-        cout << "Time:" << " " << timestep * i << " " << "Positon: " << myplane.getPosition() << " " <<"miles" << endl;
-
+        if (myplane.getAt_SCE() == 0){
+            cout << "Time:" << " " << timestep * i << " seconds, " << "Positon: " << myplane.getPosition() << " " <<"miles" << endl;
+        }
+        ++i;
     }
+    cout << "Reached Destination!" << endl;
+
     return 0;
 }
