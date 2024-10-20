@@ -4,8 +4,20 @@
 
 using namespace std;
 
+
+
 int main(){
-    Plane myplane;
+
+    std::string from;
+    std::string to;
+
+    cout << "Please input your starting airport." << endl;
+    std::cin >> from;
+    cout << "Please input the airport you would like to fly to." << endl;
+    std::cin >> to;
+
+
+    Plane myplane(from,to);
 
     // Setting the plane's velocity (in miles per hour)
     double velocity = 400;
