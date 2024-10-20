@@ -12,7 +12,7 @@ Plane::Plane() {
     vel = 0;
     at_SCE = 0;
     distance = distance_map[origin][destination];
-    cout << "Plane created at memory address" << this << endl;
+    cout << "Plane created at memory address " << this << endl;
 }
 
 // destructor
@@ -27,12 +27,14 @@ void Plane::operate(double dt) {
         at_SCE = 0;
     } else {
         if (destination == "SCE") {
-            string temp;
             at_SCE = 1;
+        } else {
+            string temp;
             temp = origin;
             origin = destination;
             destination = temp;
             pos = 0.0;
+            at_SCE = 1;
         }
     }
 }
