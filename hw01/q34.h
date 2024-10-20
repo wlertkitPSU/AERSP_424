@@ -16,7 +16,7 @@ private:
 
 public:
     // constructor
-    Plane();
+    Plane(std::string from, std::string to);
 
     // destructor
     ~Plane();
