@@ -1,17 +1,24 @@
-#include "q34.h"
 #include "q6.h"
+#include "q34.h"
 
-// constructor
-Pilot::Pilot(string pilotName) : name(pilotName){
-    cout << "Pilot " << getName() << ", ID: " << this << ", is at the gate and ready to board the plane" << endl;
-};
 
-// destructor
-Pilot::~Pilot() {
-    cout << "Pilot " << getName() << " has left the plane" << endl;
-}
+//Question 6
+    // Constructor
+    Pilot::Pilot(std::string pilotname) 
+    {
+        name = pilotname;
+        
+        cout << "Pilot "  << name << " with certificate number: " << &name << " is at the gate, ready to board the plane." << endl; 
+    }
 
-// get pilot name
-string Pilot::getName(){
-    return name;
-}
+    // Deconstructor
+    Pilot::~Pilot() 
+    {
+        cout << "Pilot " << name << " has deboarded the aircraft." << endl;
+    }
+
+    string Pilot::getName()
+    {
+        return name;   
+    }
+

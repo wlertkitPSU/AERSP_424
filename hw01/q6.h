@@ -7,13 +7,16 @@
 
 using namespace std;
 
-class Pilot {
+class Pilot
+{
 private:
-    string name;
+std::string name;
+    
 
 public:
+
     // constructor
-    Pilot(string pilotName);
+    Pilot(std::string pilotname);
 
     // destructor
     ~Pilot();
@@ -23,6 +26,7 @@ public:
 
     // pointer to Plane class
     Plane* myPlane;
+
 };
 
 #endif
