@@ -27,10 +27,10 @@ int main(){
     float plane_weight;
     float plane_moment;
     int front_num;
-    float front_weight[10]; // Assuming 10 person limit for front
+    float total_front_weight = 0;
     float front_moment_arm;
     int rear_num;
-    float rear_weight[10]; // Assuming 10 person limit for rear
+    float total_rear_weight = 0;
     float rear_moment_arm;
     float fuel;
     float fuel_weight_density;
@@ -55,8 +55,10 @@ int main(){
 
     // Input the weight of each front passenger
     for (int i = 0; i < front_num; ++i) {
+        float temp;
         cout << "Enter weight of front seat occupant " << (i + 1) << " (pounds): ";
-        cin >> front_weight[i];
+        cin >> temp;
+        total_front_weight += temp;
     }
 
     // Input the front moment arm
@@ -69,8 +71,10 @@ int main(){
 
     // Input the weight of each rear passenger
     for (int i = 0; i < rear_num; ++i){
+        float temp;
         cout << "Enter weight of rear seat occupant " << (i + 1) << " (pounds): ";
-        cin >> rear_weight[i];
+        cin >> temp;
+        total_rear_weight += temp;
     }
 
     // Input the rear moment arm
@@ -110,19 +114,6 @@ int main(){
     double total_weight;
     double total_moment;
     double cg;
-
-
-    // Calculating total front weight
-    float total_front_weight = 0;
-    for (int i = 0; i < front_num; ++i){
-        total_front_weight += front_weight[i];
-    }
-
-    // Calculating total rear weight
-    float total_rear_weight = 0;
-    for (int i = 0; i < rear_num; ++i){
-        total_rear_weight += rear_weight[i];
-    }
     
     // Calculating total weight, total moment, and CG location
     total_weight = plane_weight + total_front_weight + total_rear_weight + baggage_weight + fuel_weight;
@@ -134,8 +125,6 @@ int main(){
             current_fuel -= 0.01;
             fuel_weight = current_fuel * fuel_weight_density; // update new fuel weight
             total_weight = plane_weight + total_front_weight + total_rear_weight + baggage_weight + fuel_weight;
-            cout << total_weight << " " << "pounds" << endl;
-            cout << cg << " " << "inches" << endl;
 
             // Recalculate total moment
             total_moment = plane_moment + (total_front_weight * front_moment_arm) + (total_rear_weight * rear_moment_arm) + (baggage_weight * baggage_moment_arm) + (fuel_weight * fuel_moment_arm);
@@ -143,6 +132,8 @@ int main(){
             // Recalculate CG
             cg = total_moment/total_weight;
         }
+        cout << "################## Q1 ###################" << endl;
+        cout << "Fuel Drained: " << -(current_fuel - fuel) << " gallons" << endl;
     }
     
     else if (cg > backward_cg){
@@ -151,16 +142,15 @@ int main(){
             current_fuel += 0.01;
             fuel_weight = current_fuel * fuel_weight_density; // update new fuel weight
             total_weight = plane_weight + total_front_weight + total_rear_weight + baggage_weight + fuel_weight;
-            cout << total_weight << " " << "pounds" << endl;
-            cout << cg << " " << "inches" << endl;
 
             // Recalculate total moment
             total_moment = plane_moment + (total_front_weight * front_moment_arm) + (total_rear_weight * rear_moment_arm) + (baggage_weight * baggage_moment_arm) + (fuel_weight * fuel_moment_arm);
 
             // Recalculate CG
             cg = total_moment/total_weight;
-
         }
+        cout << "################## Q1 ###################" << endl;
+        cout << "Fuel Added: " << current_fuel - fuel << " gallons" << endl;
     }
 
     cout << "Final gross weight: " << total_weight << " " << "pounds" << endl;
