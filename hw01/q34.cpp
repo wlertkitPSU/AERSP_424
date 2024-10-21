@@ -1,41 +1,38 @@
 #include "q2.h"
 #include "q34.h"
-#include <cmath>
+#include <cmath> 
 
 // constructor
-Plane::Plane() {
-    cout << "Enter Origin: ";
-    cin >> origin;
-    cout << "Enter Destination: ";
-    cin >> destination;
+Plane::Plane(std::string from, std::string to) {
+    origin = from;
+    destination = to;
     distance_map = distance_init();
     pos = 0;
     vel = 0;
     at_SCE = 0;
-    distance = distance_map[origin][destination];
-    cout << "Plane created at memory address " << this << endl;
+
+    std::cout << "Plane created at " << this << endl;
 }
 
 // destructor
 Plane::~Plane() {
-    cout << "Plane destroyed" << endl;
+    cout << "Plane Destroyed" << endl;
 }
 
 // operate function
 void Plane::operate(double dt) {
     if (round(pos) < distance_map[origin][destination]) {
         pos += vel/3600 * dt;
-        at_SCE = 0;
+        at_SCE = false;
     } else {
-        if (destination == "SCE") {
-            at_SCE = 1;
-        } else {
-            string temp;
-            temp = origin;
-            origin = destination;
-            destination = temp;
-            pos = 0.0;
+        if (destination == "SCE") { 
+            at_SCE = true;
         }
+        string temp;
+        temp = origin;
+        origin = destination;
+        destination = temp;
+        pos = 0.0;
     }
 }
 
