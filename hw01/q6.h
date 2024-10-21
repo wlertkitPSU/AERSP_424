@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// Question 6 (Used in question 7)
 class Pilot
 {
 private:
