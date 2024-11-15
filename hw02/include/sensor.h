@@ -1,9 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include <iostream>
-#include <string>
-
+// Sensor Class
 class Sensor {
 public:
     void gatherData();
