@@ -1,5 +1,9 @@
 #include "sensor.h"
 
+Sensor::Sensor(){}
+
+Sensor::~Sensor(){}
+
 void Sensor::gatherData(){
     std::cout << "Data Gathered!" << std::endl;
 }
