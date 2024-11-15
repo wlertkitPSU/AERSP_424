@@ -2,33 +2,33 @@
 
 // Temperature Sensor
 void tempSensor::gatherData(){
-    Sensor::gatherData();
     std::cout << "Gathering data from Temperature Sensor" << std::endl;
+    Sensor::gatherData();
 }
 
 void tempSensor::processData(){
-    Sensor::processData();
     std::cout << "Processing data from Temperature Sensor" << std::endl;
+    Sensor::processData();
 }
 
 // Altitude Sensor
 void altSensor::gatherData(){
-    Sensor::gatherData();
     std::cout << "Gathering data from Altitude Sensor" << std::endl;
+    Sensor::gatherData();
 }
 
 void altSensor::processData(){
-    Sensor::processData();
     std::cout << "Processing data from Altitude Sensor" << std::endl;
+    Sensor::processData();
 }
 
 // Airspeed Sensor
 void velSensor::gatherData(){
-    Sensor::gatherData();
     std::cout << "Gathering data from Airspeed Sensor" << std::endl;
+    Sensor::gatherData();
 }
 
 void velSensor::processData(){
-    Sensor::processData();
     std::cout << "Processing data from Airspeed Sensor" << std::endl;
+    Sensor::processData();
 }
