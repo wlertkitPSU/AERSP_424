@@ -7,6 +7,8 @@
 // Temperature Sensor
 class tempSensor : public Sensor {
     public:
+        tempSensor();
+        ~tempSensor();
         void gatherData();
         void processData();
 };
@@ -14,6 +16,8 @@ class tempSensor : public Sensor {
 // Altitude Sensor
 class altSensor : public Sensor {
     public:
+        altSensor();
+        ~altSensor();
         void gatherData();
         void processData();
 };
@@ -21,6 +25,8 @@ class altSensor : public Sensor {
 // Airspeed Sensor
 class velSensor : public Sensor {
     public:
+        velSensor();
+        ~velSensor();
         void gatherData();
         void processData();
 };
