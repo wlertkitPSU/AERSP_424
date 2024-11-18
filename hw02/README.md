@@ -7,4 +7,4 @@ third_party: contains all external libraries used
 To Compile:
 1) Enter the Homework 2 project using "cd hw02"
 2) Use "bash ./build.sh" to compile using powershell OR Use "./build.sh" to compile using git bash
-3) The compiled executable file main.exe will be located in the build folder. To run the executable file, use "./build/main.exe"
+3) Outputs of the code will be shown in the results directory
