@@ -8,7 +8,7 @@ echo "Verifying packages..."
 export PATH=/mingw64/bin:$PATH
 TOOLCHAIN_PACKAGES="mingw-w64-ucrt-x86_64-gcc"
 REQUIRED_PACKAGES="mingw-w64-ucrt-x86_64-blas mingw-w64-ucrt-x86_64-lapack mingw-w64-ucrt-x86_64-vtk
-mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libtiff mingw-w64-x86_64-zlib"
+mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libtiff mingw-w64-x86_64-zlib mingw-w64-x86_64-gnuplot"
 
 is_installed() {
   pacman -Qi "$1" &>/dev/null
