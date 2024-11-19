@@ -14,7 +14,7 @@ public:
     void startTasks();
 
 private:
-    std::mutex tool_mutexes[5];  // Mutexes for the five tools
+    std::mutex tool_mutexes[5];
 };
 
-#endif // ROBOT_TASK_HPP
+#endif

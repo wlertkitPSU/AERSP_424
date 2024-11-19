@@ -18,44 +18,38 @@ void RobotTaskManager::performTask(int robot_id) {
     int first_tool = std::min(left_tool, right_tool);
     int second_tool = std::max(left_tool, right_tool);
 
-    // Output the times for grabbing, landing, and using tools at the beginning
-    if (robot_id == 0) {
-        std::cout << "Time to grab each tool: 500 ms" << std::endl;
-        std::cout << "Landing process time: 500 ms" << std::endl;
-        std::cout << "Time using tool: 1000 ms" << std::endl;
-    }
-
-    // Timing: Start the clock for the task
+    // Timing: Starts clock
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Lock the first tool, then the second tool
+    // Attempt to grab the tools
+    std::cout << "Robot " << robot_id << " is reaching and grabbing the tools." << std::endl;
+
+    // Lock the first tool, then the second tool (in a deadlock-safe order)
     std::lock_guard<std::mutex> lock1(tool_mutexes[first_tool]);
-    std::cout << "Robot " << robot_id << " has grabbed tool " << first_tool << "." << std::endl;
     std::lock_guard<std::mutex> lock2(tool_mutexes[second_tool]);
-    std::cout << "Robot " << robot_id << " has grabbed tool " << second_tool 
-              << " and is starting the task." << std::endl;
 
-    // Simulate grabbing tools (500 ms) across all robots
+    // Once robot has locked both tools it starts performing the task
+    std::cout << "Robot " << robot_id << " has grabbed the tools and is starting the task." << std::endl;
+
+    // Simulates grabbing tools (500 ms)
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // Simulate landing process (500 ms) across all robots
+    // Simulate landing process (500 ms)
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    std::cout << "Robot " << robot_id << " has landed and is ready to use the tools." << std::endl;
 
-    // Simulate using the tool for the remaining 3000 ms, ensuring the total process for all robots is 4 seconds
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000)); // Total task time = 4 seconds for all robots
-
-    // End timing for task completion
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto total_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-    std::cout << "Total time for robot " << robot_id << " to complete the task: " 
-              << total_duration.count() << " ms" << std::endl;
+    // Simulate using the tools (1000 ms)
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     std::cout << "Robot " << robot_id << " has completed the task and is returning the tools." << std::endl;
 }
 
 // Function to start all robot tasks
 void RobotTaskManager::startTasks() {
+    // Output the times each robot has to perform tasks (only once)
+    std::cout << "Time grabbing tool: 500 ms" << std::endl;
+    std::cout << "Time landing process: 500 ms" << std::endl;
+    std::cout << "Time using tool: 1000 ms" << std::endl;
+
     std::vector<std::thread> threads;
 
     // Create and start threads for the robots
