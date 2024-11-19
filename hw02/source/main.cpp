@@ -1,7 +1,8 @@
-#include "q1.h"
-#include "sensorFactory.h"
-#include "aerospaceControlSystem.h"
-#include "matplot/matplot.h"
+#include <q1.h>
+#include <q4.h>
+#include <sensorFactory.h>
+#include <aerospaceControlSystem.h>
+#include <matplot/matplot.h>
 
 int main() {
     // QUESTION 1
@@ -29,21 +30,13 @@ int main() {
     // QUESTION 4
     std::cout << "#################### QUESTION 4 ####################" << std::endl;
     
-    // Generating meshgrid
-    std::vector<double> x = matplot::iota(-5, 0.1, 0.5);
-    std::vector<double> y = matplot::iota(-5, 0.1, 0.5);
-    auto [X, Y] = matplot::meshgrid(x, y);
+    // Creating a 3D graph
+    create3DGraph();
+    std::cout << "Output graph is shown in graph_3D.jpg" << std::endl;
 
-    // Computing z = sin(sqrt(x^2 + y^2))
-    auto z = [](double x, double y){
-        return std::sin(std::sqrt(x*x + y*y));
-    };
-    auto Z = matplot::transform(X, Y, z);
-
-    // Plotting
-    auto fig = matplot::figure();
-    auto ax = fig->add_axes();
-    ax->surf(X, Y, Z);
+    // Read from CSV file and plot
+    csvPlot();
+    std::cout << "Output graph is shown in butterfly_curve.jpg" << std::endl;
 
     std::cout << "##################### END OF QUESTION 4 #####################" << std::endl;
     return 0;
