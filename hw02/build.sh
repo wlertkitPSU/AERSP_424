@@ -1,40 +1,64 @@
-#!/bin/bash
+#!/bin/sh
+current_directory="$(cd "$(dirname "$0")" && pwd)"
+project_root_dir=$current_directory
+cd ${project_root_dir}
 
-# Set compiler and flags
-CXX=g++ 
-CXXFLAGS="-std=c++17 -Wall" 
-INCLUDE_DIR="include"
-SOURCE_DIR="source"
-OUTPUT_DIR="build"
-OUTPUT="build/main"
+# Installing packages
+echo "Verifying packages..."
+export PATH=/mingw64/bin:$PATH
+TOOLCHAIN_PACKAGES="mingw-w64-ucrt-x86_64-gcc"
+REQUIRED_PACKAGES="mingw-w64-ucrt-x86_64-blas mingw-w64-ucrt-x86_64-lapack mingw-w64-ucrt-x86_64-vtk
+mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libtiff mingw-w64-x86_64-zlib mingw-w64-x86_64-gnuplot"
 
-# Make build directory if none exists
-mkdir -p $OUTPUT_DIR
+is_installed() {
+  pacman -Qi "$1" &>/dev/null
+}
 
-# Check if the include and source directories exist
-echo "Checking directories..."
-if [ ! -d "$INCLUDE_DIR" ]; then
-  echo "Error: Include directory '$INCLUDE_DIR' is missing!"
-  exit 1
-fi
-
-if [ ! -d "$SOURCE_DIR" ]; then
-  echo "Error: Source directory '$SOURCE_DIR' is missing!"
-  exit 1
-fi
-
-# Compile the project
-echo "Compiling project..."
-
-# Compiling all .cpp files in the source folder
-$CXX $CXXFLAGS -I $INCLUDE_DIR $SOURCE_DIR/*.cpp -o $OUTPUT
-
-# Check if compilation succeeded
-if [ $? -eq 0 ]; then
-    echo "Build succeeded. Executable created: ./$OUTPUT"
-    exit 0
+if ! is_installed "$TOOLCHAIN_PACKAGES"; then
+  echo "mingw-w64-ucrt-x86_64-toolchain not found, installing..."
+  pacman -S --needed "mingw-w64-ucrt-x86_64-toolchain"
 else
-    echo "Build failed."
-    exit 1
+  echo "mingw-w64-ucrt-x86_64-toolchain is installed."
 fi
 
+for PACKAGE in $REQUIRED_PACKAGES; do
+  if ! is_installed "$PACKAGE"; then
+    echo "$PACKAGE not found, installing..."
+    pacman -S --needed "$PACKAGE"
+  else
+    echo "$PACKAGE is installed."
+  fi
+done
+
+# Installing External Libraries
+echo -e "\nVerifying external libraries..."
+mkdir -p ${project_root_dir}/third_party
+cd ${project_root_dir}/third_party
+
+if [ ! -d "matplotplusplus" ]; then
+  echo "matplotplusplus not found, installing..."
+  git clone https://github.com/alandefreitas/matplotplusplus
+  cd ${project_root_dir}/third_party/matplotplusplus
+  rm -rf build install
+  mkdir -p build install
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/matplotplusplus/install -DCMAKE_BUILD_TYPE=Release ..
+  cmake --build . -j 4
+  cmake --install .
+fi
+echo "matplotplusplus installed!"
+
+# Compiling
+echo -e "\nCompiling..."
+cd ${project_root_dir}
+rm -rf ${project_root_dir}/build
+mkdir -p ${project_root_dir}/build
+cd ${project_root_dir}/build
+cmake ..
+cmake --build . -j 4
+cmake --install .
+cd ${project_root_dir}
+mkdir -p ${project_root_dir}/results
+./build/homework02 -c config.inp > results/results.txt 2>&1
+echo "Build complete!"
+echo "Outputs are shown in results/results.txt"
