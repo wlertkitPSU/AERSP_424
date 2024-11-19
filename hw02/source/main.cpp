@@ -1,4 +1,5 @@
 #include "q1.h"
+#include "q2.h"
 #include "sensorFactory.h"
 #include "aerospaceControlSystem.h"
 
@@ -24,5 +25,14 @@ int main() {
     delete velSensorPtr;
 
     std::cout << "##################### END OF QUESTION 1 #####################" << std::endl;
+    return 0;
+
+    // QUESTION 2
+    std::cout << "#################### QUESTION 2 ####################" << std::endl;
+
+    RobotTaskManager manager;
+    manager.startTasks();
+
+    std::cout << "##################### END OF QUESTION 2 #####################" << std::endl;
     return 0;
 }
