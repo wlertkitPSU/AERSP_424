@@ -1,11 +1,12 @@
 #ifndef q2_H
 #define q2_H
 
-#include <iostream>
-#include <thread>
-#include <mutex>
-#include <vector>
 #include <chrono>
+#include <iostream>
+#include <vector>
+#include <mutex>
+#include <thread>
+#include <algorithm>
 
 class RobotTaskManager {
 public:
