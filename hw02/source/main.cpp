@@ -36,8 +36,6 @@ int main() {
     // Start the tasks for all robots
     manager.startTasks();
 
-    return 0;
-
     std::cout << "##################### END OF QUESTION 2 #####################" << std::endl;
 
     // QUESTION 4
