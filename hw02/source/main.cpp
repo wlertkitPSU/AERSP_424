@@ -1,9 +1,9 @@
-#include <q1.h>
-#include <q2.h>
-#include <q4.h>
-#include <sensorFactory.h>
-#include <aerospaceControlSystem.h>
-#include <matplot/matplot.h>
+#include "q1.h"
+#include "q2.h"
+#include "q4.h"
+#include "sensorFactory.h"
+#include "aerospaceControlSystem.h"
+#include "matplot/matplot.h"
 
 int main() {
     // QUESTION 1
@@ -29,12 +29,25 @@ int main() {
     std::cout << "##################### END OF QUESTION 1 #####################" << std::endl;
 
     // QUESTION 2
-     std::cout << "#################### QUESTION 2 ####################" << std::endl;
+    cout<< "TIME_GRABBING_TOOL:   " << "500" << endl;
+    cout << "TIME_LANDING_TOOL:   " << "500" << endl;
+    cout << "TIME_USING_TOOL:     " << "1000" << endl;
+    
+    std::cout << "#################### QUESTION 2 ####################" << std::endl;
 
-    RobotTaskManager manager;
+    mutex m1,m2,m3,m4,m5;
+    mutex m0;
 
-    // Start the tasks for all robots
-    manager.startTasks();
+    thread t0([&] {robots(0,m1,m2,m0);});
+    thread t1([&] {robots(1,m2,m3,m0);});
+    thread t2([&] {robots(2,m3,m4,m0);});
+    thread t3([&] {robots(3,m4,m5,m0);});
+    thread t4([&] {robots(4,m5,m1,m0);});
+    t0.join();
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
 
     std::cout << "##################### END OF QUESTION 2 #####################" << std::endl;
 
