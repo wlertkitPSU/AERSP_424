@@ -1,9 +1,11 @@
 #include "q1.h"
 #include "q2.h"
+#include "q3.h"
 #include "q4.h"
 #include "sensorFactory.h"
 #include "aerospaceControlSystem.h"
 #include "matplot/matplot.h"
+
 
 int main() {
     // QUESTION 1
@@ -50,6 +52,42 @@ int main() {
     t4.join();
 
     std::cout << "##################### END OF QUESTION 2 #####################" << std::endl;
+
+    // QUESTION 3
+
+    std::cout << "#################### QUESTION 3 ####################" << std::endl;
+
+    int MAX_TRAFFIC_PATTERN = 3;
+    int TOTAL_AIRCRAFT = 10;
+
+    // Shared resources
+    std::queue<int> trafficPattern; // Queue for aircraft in runway
+    std::mutex mtx;
+    std::condition_variable cv; // Condition variable for ATC sleep/wake
+    std::atomic<bool> atc_quit = false;
+
+    std::thread atc(airTrafficController, std::ref(mtx), std::ref(trafficPattern), std::ref(cv), std::ref(atc_quit), MAX_TRAFFIC_PATTERN);
+    std::vector<std::thread> aircraftThreads;
+
+    // Create 10 aircraft threads
+    for (int i = 0; i < TOTAL_AIRCRAFT; ++i)
+    {
+        aircraftThreads.push_back(std::thread(aircraft, i + 1, std::ref(mtx), std::ref(trafficPattern), std::ref(cv), std::ref(atc_quit), MAX_TRAFFIC_PATTERN));
+    }
+
+     // Join aircraft threads
+    for (auto& t : aircraftThreads)  // Iterating over the vector of threads and joining them
+    {
+        t.join();
+    }
+
+    // End ATC if aircraft threads finish
+    atc_quit = true;
+    cv.notify_one();
+    atc.join();
+
+    std::cout << "################# End of Question 3 #############.\n";
+
 
     // QUESTION 4
     std::cout << "#################### QUESTION 4 ####################" << std::endl;
