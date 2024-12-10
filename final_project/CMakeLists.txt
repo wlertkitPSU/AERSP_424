@@ -23,10 +23,9 @@ add_executable(${CMAKE_PROJECT_NAME} ${all_SRCS})
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3)
 
 
-add_custom_command(TARGET chess
+add_custom_command(TARGET chessvim -r /c/Users/Earth/AERSP_424/.git/MERGE_MSG
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
                    ${PROJECT_SOURCE_DIR}/third_party/SDL/install/bin/SDL3.dll
                    $<TARGET_FILE_DIR:chess>/SDL3.dll
-                   COMMENT "Copy ncd.json into binaries folder"
                    )
