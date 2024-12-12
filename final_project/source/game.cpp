@@ -152,39 +152,52 @@ void Game::moveSelected(Square Cells[][8], int x, int y) {
 // Run the game -- handles user input and game loop
 void Game::run() {
     while (!isOver) {
-        // Gets input, moves piece, checks game status, etc.
         int x, y;
-        std::cout << "Enter coordinates to move (x y): ";
-        std::cin >> x >> y;
+        bool validInput = false;
 
-        if (selected) {
-            moveSelected(cells, x, y);
-        } else {
-            SelectPiece(cells, x, y);
+        // Gets valid input
+        while (!validInput) {
+            std::cout << "Enter coordinates (x y): ";
+            if (!(std::cin >> x >> y)) {
+                std::cin.clear(); // Clears error flags
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discards invalid input
+                std::cout << "Invalid input. Please enter two integers between 0 and 7.\n";
+                continue;
+            }
+
+            // Checks if coordinates are in range
+            if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+                std::cout << "Coordinates out of bounds. Please enter values between 0 and 7.\n";
+            } else {
+                validInput = true;
+            }
         }
 
-        printBoard(); // Prints board after each move
-        // Add more logic to check for checkmate, stalemate (need to incorporate from King class)
+        // Handles input
+        if (selected) {
+            // Checks if the move is valid
+            bool validMove = false;
+            for (const auto& move : moves) {
+                if (move.x == x && move.y == y) {
+                    validMove = true;
+                    break;
+                }
+            }
+
+            if (validMove) {
+                moveSelected(cells, x, y);
+                selected = false;
+            } else {
+                std::cout << "Invalid move. Try again.\n";
+            }
+        } else {
+            // Attempt to select a piece
+            if (!SelectPiece(cells, x, y)) {
+                std::cout << "Invalid selection. Either the square is empty or it's not your turn.\n";
+            }
+        }
+
+        printBoard(); // Prints the board after each turn
+
     }
-}
-
-// Draws possible moves for the selected piece
-void Game::DrawPossibleMoves() {
-    // Implement logic to highlight possible moves for the selected piece (need to incorporate from pieces class)
-}
-
-// Handles game-over conditions (checkmate, stalemate, etc.)
-void Game::gameOver() {
-    isOver = true;
-    std::cout << "Game Over!" << std::endl;
-}
-
-// Sets up the right side of the window for graphical rendering (for graphics)
-void Game::SetRightSideofWindow() {
-    // Implement specific rendering logic for the right side of the window
-}
-
-// Checks if a piece is selected
-bool Game::getSelected() const {
-    return selected;
 }

@@ -11,8 +11,8 @@ public:
     bool isOccupied() const;       // Checks if the square is occupied by a piece
     int getX() const;              // Gets the x-coordinate of the square
     int getY() const;              // Gets the y-coordinate of the square
+    int x, y;                      // Coordinates of the square
 
 private:
-    int x, y;                      // Coordinates of the square
     Pieces* pieces;                
 };
