@@ -141,7 +141,7 @@ bool Game::SelectPiece(Square Cells[][8], int x, int y) {
 void Game::moveSelected(Square Cells[][8], int x, int y) {
     // Checks if the move is valid (implement actual move logic in Pieces class)
     if (selected_piece->isValidMove(x, y, Cells)) {
-        Cells[x][y].setPiece(*selected_piece); // Moves the piece to the new square
+        Cells[x][y].setPiece(selected_piece); // Moves the piece to the new square
         selected_piece->setPosition(x, y); // Updates the piece's position
         number_of_moves++;
         selected = false; // Deselects the piece
