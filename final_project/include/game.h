@@ -21,7 +21,7 @@ public:
     Game();
     ~Game();
 
-    // Game-related functions
+    // Game functions
     void Start();
     void DrawPossibleMoves();
     bool SelectPiece(Square Cells[][8], int x, int y);
@@ -32,16 +32,16 @@ public:
     void run(); // Handles user inputs and main game loop
 
     // Board and state management
-    void draw() const; // Function to draw the board (probably for graphics rendering)
-    bool getSelected() const; // Check if a piece is selected
-    void updateBoardState(); // Update the state of the board after a move
+    void draw() const; // Draws board
+    bool getSelected() const; // Checks if a piece is selected
+    void updateBoardState(); // Updates the state of the board after a move
     
-    // Member variables (Board and pieces)
-    Square cells[8][8]; // The 8x8 chessboard
-    bool isOver; // Flag to indicate if the game is over
-    bool whiteTurn; // Flag to track whose turn it is (true for white, false for black)
+    // Board and pieces variables
+    Square cells[8][8]; // 8x8 board
+    bool isOver; // Flags to indicate if the game is over
+    bool whiteTurn; // Flags to track whose turn it is (true for white, false for black)
     int number_of_moves; // Number of moves made in the game
-    Pieces *selected_piece; // Pointer to the currently selected piece
+    Pieces *selected_piece;
     
     // Piece containers for white and black pieces
     std::vector<Pieces *> whitePieces;
@@ -64,8 +64,7 @@ public:
     Pawn *b_pawn[8];
 
 private:
-    // Private member variables
     std::vector<Square> moves; // Vector to store valid moves for the selected piece
-    bool gameStatus; // Current game status (e.g., checkmate, stalemate)
+    bool gameStatus; // Current game status
     bool selected; // Flag indicating whether a piece is selected
 };
