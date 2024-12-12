@@ -1,420 +1,190 @@
-#include <iostream>
 #include "game.h"
-#include "Pieces.h"
 #include "square.h"
+#include "Pieces.h"
 
-Game::Game()
-{
-    w_king = new King(1);
+// Constructor
+Game::Game() {
+    // Initializes board and pieces
+    isOver = false;
+    whiteTurn = true;
+    number_of_moves = 0;
+    selected_piece = nullptr;
+    selected = false;
+    gameStatus = true;
+
+    // Initializes the board cells
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            cells[i][j] = Square(i, j);
+        }
+    }
+
+    // Initializes white pieces
+    w_king = new King("White", 0, 4);
+    w_queen = new Queen("White", 0, 3);
+    w_bishop[0] = new Bishop("White", 0, 2);
+    w_bishop[1] = new Bishop("White", 0, 5);
+    w_rook[0] = new Rook("White", 0, 0);
+    w_rook[1] = new Rook("White", 0, 7);
+    w_knight[0] = new Knight("White", 0, 1);
+    w_knight[1] = new Knight("White", 0, 6);
+    for (int i = 0; i < 8; ++i) {
+        w_pawn[i] = new Pawn("White", 1, i);
+    }
+
+    // Initializes black pieces
+    b_king = new King("Black", 7, 4);
+    b_queen = new Queen("Black", 7, 3);
+    b_bishop[0] = new Bishop("Black", 7, 2);
+    b_bishop[1] = new Bishop("Black", 7, 5);
+    b_rook[0] = new Rook("Black", 7, 0);
+    b_rook[1] = new Rook("Black", 7, 7);
+    b_knight[0] = new Knight("Black", 7, 1);
+    b_knight[1] = new Knight("Black", 7, 6);
+    for (int i = 0; i < 8; ++i) {
+        b_pawn[i] = new Pawn("Black", 6, i);
+    }
+
+    // Adds pieces to vectors
     whitePieces.push_back(w_king);
-    w_queen = new Queen(1);
     whitePieces.push_back(w_queen);
-    b_king = new King(0);
-    blackPieces.push_back(b_king);
-    b_queen = new Queen(0);
-    blackPieces.push_back(b_queen);
-    for (int i = 0; i < 8; i++)
-    {
-        b_pawn[i] = new Pawn(0);
-        blackPieces.push_back(b_pawn[i]);
-        w_pawn[i] = new Pawn(1);
+    for (int i = 0; i < 2; ++i) {
+        whitePieces.push_back(w_bishop[i]);
+        whitePieces.push_back(w_rook[i]);
+        whitePieces.push_back(w_knight[i]);
+    }
+    for (int i = 0; i < 8; ++i) {
         whitePieces.push_back(w_pawn[i]);
     }
-    for (int i = 0; i < 2; i++)
-    {
-        w_bishop[i] = new Bishop(1);
-        whitePieces.push_back(w_bishop[i]);
-        w_rook[i] = new Rook(1);
-        whitePieces.push_back(w_rook[i]);
-        w_knight[i] = new Knight(1);
-        whitePieces.push_back(w_knight[i]);
-        b_bishop[i] = new Bishop(0);
+
+    blackPieces.push_back(b_king);
+    blackPieces.push_back(b_queen);
+    for (int i = 0; i < 2; ++i) {
         blackPieces.push_back(b_bishop[i]);
-        b_rook[i] = new Rook(0);
         blackPieces.push_back(b_rook[i]);
-        b_knight[i] = new Knight(0);
         blackPieces.push_back(b_knight[i]);
     }
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            cells[i][j].x = i;
-            cells[i][j].y = j;
-        }
+    for (int i = 0; i < 8; ++i) {
+        blackPieces.push_back(b_pawn[i]);
     }
-    Start();
 }
 
-void Game::Start()
-{
-    number_of_moves = 0;
-    isOver = false;
-    gameStatus = true;
-    whiteTurn = 1;
-    selected = false;
-    selected_piece = NULL;
-    for (int i = 0; i < 8; i++)
-    {
-        b_pawn[i]->y = i;
-        w_pawn[i]->y = i;
+// Destructor
+Game::~Game() {
+    // Frees dynamically allocated memory
+    delete w_king;
+    delete w_queen;
+    for (int i = 0; i < 2; ++i) {
+        delete w_bishop[i];
+        delete w_rook[i];
+        delete w_knight[i];
     }
-    b_bishop[0]->y = 2;
-    b_bishop[1]->y = 5;
-    b_rook[0]->y = 0;
-    b_rook[1]->y = 7;
-    b_knight[0]->y = 1;
-    b_knight[1]->y = 6;
-    w_bishop[0]->y = 2;
-    w_bishop[1]->y = 5;
-    w_rook[0]->y = 0;
-    w_rook[1]->y = 7;
-    w_knight[0]->y = 1;
-    w_knight[1]->y = 6;
-    for (int i = 0; i < 2; i++)
-    {
-        // Removed graphics-related code
+    for (int i = 0; i < 8; ++i) {
+        delete w_pawn[i];
     }
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            // Removed graphics-related code
-        }
+
+    delete b_king;
+    delete b_queen;
+    for (int i = 0; i < 2; ++i) {
+        delete b_bishop[i];
+        delete b_rook[i];
+        delete b_knight[i];
     }
-    for (int i = 0; i < 2; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            cells[7 - i][j].occupied_color = 1;
-            cells[i][j].occupied_color = -1;
-        }
+    for (int i = 0; i < 8; ++i) {
+        delete b_pawn[i];
     }
-    // loop to set up pawns on board
-    for (int j = 0; j < 8; j++)
-    {
-        cells[1][j].occupied_value = -3;
-        cells[6][j].occupied_value = -3;
-    }
-    cells[0][0].occupied_value = 1;
-    cells[7][7].occupied_value = 1;
-    cells[7][0].occupied_value = 1;
-    cells[0][7].occupied_value = 1; // setting up rook
-    cells[0][1].occupied_value = -1;
-    cells[7][6].occupied_value = -1;
-    cells[0][6].occupied_value = -1;
-    cells[7][1].occupied_value = -1; // setting up knight
-    cells[0][2].occupied_value = -2;
-    cells[7][5].occupied_value = -2;
-    cells[0][5].occupied_value = -2;
-    cells[7][2].occupied_value = -2; // setting up bishop
-    cells[7][3].occupied_value = 2;
-    cells[0][3].occupied_value = 2; // setting up queen
-    cells[7][4].occupied_value = 3;
-    cells[0][4].occupied_value = 3; // setting up king
 }
 
-void Game::SetRightSideofWindow()
-{
-    // Removed graphics-related code
-    number_of_moves++;
-    if (whiteTurn == 0 && !isOver)
-        std::cout << "Black's Turn" << std::endl;
-    else if (whiteTurn == 1 && !isOver)
-        std::cout << "White's Turn" << std::endl;
+// Start the game
+void Game::Start() {
+    printBoard();
+    run();
 }
 
-void Game::draw() const
-{
-    // Removed graphics-related code
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            // Print the board cells
-            std::cout << cells[i][j].occupied_value << " ";
+// Prints the current board state
+void Game::printBoard() const {
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            // Prints each square with its piece
+            std::cout << cells[i][j].getPiece() << " ";
         }
         std::cout << std::endl;
     }
-    if (isOver == false)
-    {
-        if (whiteTurn == 1)
-            std::cout << "White's Turn" << std::endl;
-        else
-            std::cout << "Black's Turn" << std::endl;
+}
+
+// Draw the current game state (for graphics)
+void Game::draw() const {
+    std::cout << "Drawing game..." << std::endl;
+}
+
+// Select a piece
+bool Game::SelectPiece(Square Cells[][8], int x, int y) {
+    // Check if the cell has a piece
+    if (Cells[x][y].getPiece() == nullptr) {
+        return false; // No piece to select
+    }
+
+    // Check if the piece belongs to the current player
+    if (whiteTurn && Cells[x][y].getPiece()->isWhite) {
+        selected_piece = Cells[x][y].getPiece();
+        selected = true;
+        return true;
+    } else if (!whiteTurn && !Cells[x][y].getPiece()->isWhite) {
+        selected_piece = Cells[x][y].getPiece();
+        selected = true;
+        return true;
+    }
+    return false;
+}
+
+// Move the selected piece
+void Game::moveSelected(Square Cells[][8], int x, int y) {
+    // Checks if the move is valid (implement actual move logic in Pieces class)
+    if (selected_piece->isValidMove(x, y, Cells)) {
+        Cells[x][y].setPiece(*selected_piece); // Moves the piece to the new square
+        selected_piece->setPosition(x, y); // Updates the piece's position
+        number_of_moves++;
+        selected = false; // Deselects the piece
+        whiteTurn = !whiteTurn; // Changes player turn
     }
 }
 
-void Game::gameOver()
-{
+// Run the game -- handles user input and game loop
+void Game::run() {
+    while (!isOver) {
+        // Gets input, moves piece, checks game status, etc.
+        int x, y;
+        std::cout << "Enter coordinates to move (x y): ";
+        std::cin >> x >> y;
+
+        if (selected) {
+            moveSelected(cells, x, y);
+        } else {
+            SelectPiece(cells, x, y);
+        }
+
+        printBoard(); // Prints board after each move
+        // Add more logic to check for checkmate, stalemate (need to incorporate from King class)
+    }
+}
+
+// Draws possible moves for the selected piece
+void Game::DrawPossibleMoves() {
+    // Implement logic to highlight possible moves for the selected piece (need to incorporate from pieces class)
+}
+
+// Handles game-over conditions (checkmate, stalemate, etc.)
+void Game::gameOver() {
     isOver = true;
-    if (whiteTurn == 0)
-        std::cout << "CHECKMATE! White Won!!" << std::endl;
-    else
-        std::cout << "CHECKMATE! Black Won!!" << std::endl;
+    std::cout << "Game Over!" << std::endl;
 }
 
-void Game::DrawPossibleMoves()
-{
-    if (selected_piece == NULL)
-        return;
-    newmoves.clear();
-    moves.clear();
-    moves = selected_piece->getMoves(cells, selected_piece->x, selected_piece->y);
-    for (int i = 0; i < moves.size(); i++)
-    {
-
-    }
+// Sets up the right side of the window for graphical rendering (for graphics)
+void Game::SetRightSideofWindow() {
+    // Implement specific rendering logic for the right side of the window
 }
 
-bool Game::SelectPiece(Square Cells[][8], int x, int y)
-{
-    if (Cells[x][y].occupied_color == 0)
-    {
-        selected_piece = NULL;
-        return false;
-    }
-    if (Cells[x][y].occupied_color == 1 && whiteTurn == 0 || Cells[x][y].occupied_color == -1 && whiteTurn == 1)
-    {
-        selected_piece = NULL;
-        return false;
-    }
-    selected = true;
-    if (Cells[x][y].occupied_color == 1)
-    {
-        if (Cells[x][y].occupied_value == 3)
-            selected_piece = w_king;
-        else if (Cells[x][y].occupied_value == 2)
-            selected_piece = w_queen;
-        else if (Cells[x][y].occupied_value == 1)
-        {
-            if (w_rook[0]->x == x && w_rook[0]->y == y)
-                selected_piece = w_rook[0];
-            else
-                selected_piece = w_rook[1];
-        }
-        else if (Cells[x][y].occupied_value == -2)
-        {
-            if (w_bishop[0]->x == x && w_bishop[0]->y == y)
-                selected_piece = w_bishop[0];
-            else
-                selected_piece = w_bishop[1];
-        }
-        else if (Cells[x][y].occupied_value == -1)
-        {
-            if (w_knight[0]->x == x && w_knight[0]->y == y)
-                selected_piece = w_knight[0];
-            else
-                selected_piece = w_knight[1];
-        }
-        else if (Cells[x][y].occupied_value == -3)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if (w_pawn[i]->x == x && w_pawn[i]->y == y)
-                {
-                    selected_piece = w_pawn[i];
-                    break;
-                }
-            }
-        }
-    }
-    else
-    {
-        if (Cells[x][y].occupied_value == 3)
-            selected_piece = b_king;
-        else if (Cells[x][y].occupied_value == 2)
-            selected_piece = b_queen;
-        else if (Cells[x][y].occupied_value == 1)
-        {
-            if (b_rook[0]->x == x && b_rook[0]->y == y)
-                selected_piece = b_rook[0];
-            else
-                selected_piece = b_rook[1];
-        }
-        else if (Cells[x][y].occupied_value == -2)
-        {
-            if (b_bishop[0]->x == x && b_bishop[0]->y == y)
-                selected_piece = b_bishop[0];
-            else
-                selected_piece = b_bishop[1];
-        }
-        else if (Cells[x][y].occupied_value == -1)
-        {
-            if (b_knight[0]->x == x && b_knight[0]->y == y)
-                selected_piece = b_knight[0];
-            else
-                selected_piece = b_knight[1];
-        }
-        else
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if (b_pawn[i]->x == x && b_pawn[i]->y == y)
-                {
-                    selected_piece = b_pawn[i];
-                    break;
-                }
-            }
-        }
-    }
-    return true;
-}
-   DrawPossibleMoves();
-    return true;
-}
-
-bool Game::getSelected()
-{
+// Checks if a piece is selected
+bool Game::getSelected() const {
     return selected;
-}
-
-void Game::moveSelected(Square Cells[][8], int x, int y)
-{
-    if (selected_piece == NULL)
-        return;
-    bool valid = false;
-    vector<Square> a = selected_piece->getMoves(cells, selected_piece->x, selected_piece->y);
-    for (int i = 0; i < a.size(); i++)
-    {
-        if (x == a[i].x && y == a[i].y)
-        {
-            valid = true;
-            break;
-        }
-    }
-    if (valid)
-    {
-        int a = selected_piece->x, b = selected_piece->y;
-        if (Cells[x][y].occupied_color != 0 && Cells[x][y].occupied_color != Cells[a][b].occupied_color)
-        {
-            if (Cells[x][y].occupied_color == 1)
-            {
-                for (int i = 0; i < whitePieces.size(); i++)
-                {
-                    if (whitePieces[i]->x == x && whitePieces[i]->y == y)
-                    {
-                        whitePieces[i]->isAlive = false;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < blackPieces.size(); i++)
-                {
-                    if (blackPieces[i]->x == x && blackPieces[i]->y == y)
-                    {
-                        blackPieces[i]->isAlive = false;
-                    }
-                }
-            }
-        }
-        Cells[x][y].occupied_color = (whiteTurn == 1) ? 1 : -1;
-        Cells[x][y].occupied_value = selected_piece->occupied_value;
-        Cells[a][b].occupied_value = 0;
-        Cells[selected_piece->x][selected_piece->y].occupied_color = 0;
-        if (whiteTurn)
-        {
-            if (w_king->x == a && w_king->y == b)
-                w_king->x = x, w_king->y = y;
-            else if (w_queen->x == a && w_queen->y == b)
-                w_queen->x = x, w_queen->y = y;
-            else if (w_bishop[0]->x == a && w_bishop[0]->y == b)
-                w_bishop[0]->x = x, w_bishop[0]->y = y;
-            else if (w_bishop[1]->x == a && w_bishop[1]->y == b)
-                w_bishop[1]->x = x, w_bishop[1]->y = y;
-            else if (w_knight[0]->x == a && w_knight[0]->y == b)
-                w_knight[0]->x = x, w_knight[0]->y = y;
-            else if (w_knight[1]->x == a && w_knight[1]->y == b)
-                w_knight[1]->x = x, w_knight[1]->y = y;
-            else if (w_rook[0]->x == a && w_rook[0]->y == b)
-                w_rook[0]->x = x, w_rook[0]->y = y;
-            else if (w_rook[1]->x == a && w_rook[1]->y == b)
-                w_rook[1]->x = x, w_rook[1]->y = y;
-            else
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    if (w_pawn[i]->x == a && w_pawn[i]->y == b)
-                    {
-                        w_pawn[i]->x = x;
-                        w_pawn[i]->y = y;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (b_king->x == a && b_king->y == b)
-                b_king->x = x, b_king->y = y;
-            else if (b_queen->x == a && b_queen->y == b)
-                b_queen->x = x, b_queen->y = y;
-            else if (b_bishop[0]->x == a && b_bishop[0]->y == b)
-                b_bishop[0]->x = x, b_bishop[0]->y = y;
-            else if (b_bishop[1]->x == a && b_bishop[1]->y == b)
-                b_bishop[1]->x = x, b_bishop[1]->y = y;
-            else if (b_knight[0]->x == a && b_knight[0]->y == b)
-                b_knight[0]->x = x, b_knight[0]->y = y;
-            else if (b_knight[1]->x == a && b_knight[1]->y == b)
-                b_knight[1]->x = x, b_knight[1]->y = y;
-            else if (b_rook[0]->x == a && b_rook[0]->y == b)
-                b_rook[0]->x = x, b_rook[0]->y = y;
-            else if (b_rook[1]->x == a && b_rook[1]->y == b)
-                b_rook[1]->x = x, b_rook[1]->y = y;
-            else
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    if (b_pawn[i]->x == a && b_pawn[i]->y == b)
-                    {
-                        b_pawn[i]->x = x;
-                        b_pawn[i]->y = y;
-                    }
-                }
-            }
-        }
-        whiteTurn = !whiteTurn;
-        SetRightSideofWindow();
-    }
-    if (!w_king->isAlive || !b_king->isAlive)
-    {
-        gameOver();
-    }
-    selected_piece = NULL;
-    selected = false;
-
-    void Game::printBoard() const
-{
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            if (cells[i][j].occupied_value == 0)
-                std::cout << ". ";
-            else
-                std::cout << cells[i][j].occupied_value << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
-void Game::run()
-{
-    int x, y;
-    while (!isOver)
-    {
-        printBoard();
-        std::cout << "Enter the coordinates of the piece to move (x y): ";
-        std::cin >> x >> y;
-        if (!SelectPiece(cells, x, y))
-        {
-            std::cout << "Invalid selection. Try again." << std::endl;
-            continue;
-        }
-        std::cout << "Enter the coordinates to move the piece to (x y): ";
-        std::cin >> x >> y;
-        moveSelected(cells, x, y);
-    }
-}
 }

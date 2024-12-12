@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include"square.h"
 using namespace std;
 
 class Pieces
