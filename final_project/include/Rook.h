@@ -1,6 +1,7 @@
 #ifndef ROOK_H
 #define ROOK_H
 #include "Pieces.h"
+#include "square.h"
 #include <vector>
 using namespace std;
 class Rook : public Pieces

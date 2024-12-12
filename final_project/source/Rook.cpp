@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Game.h"
 #include "Pieces.h"
+#include "Square.h"
 #include <vector>
 #include "Rook.h"
 #include "Game.h"

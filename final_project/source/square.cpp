@@ -1,6 +1,6 @@
-#include "square.h"
+#include "Square.h"
 
-Square ::Square()
+Square::Square()
 {
    occupied_color = 0;
    occupied_value = 0;
