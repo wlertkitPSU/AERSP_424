@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Pieces.h"
+#include "Square.h"
 
 class King : public Pieces
 {

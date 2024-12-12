@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Pieces.h"
+#include "Square.h"
 using namespace std;
 
 class Knight : public Pieces

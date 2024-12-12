@@ -2,6 +2,7 @@
 #include <vector>
 #include "Pieces.h"
 #include "King.h"
+#include "Square.h"
 using namespace std;
 
 King::King(int color)

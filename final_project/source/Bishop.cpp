@@ -2,6 +2,7 @@
 #include <vector>
 #include "Pieces.h"
 #include "Bishop.h"
+#include "Game.h"
 using namespace std;
 
 Bishop::Bishop(int color)

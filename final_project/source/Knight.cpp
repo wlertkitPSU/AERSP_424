@@ -2,6 +2,7 @@
 #include <vector>
 #include "Pieces.h"
 #include "Knight.h"
+#include "Square.h"
 using namespace std;
 
 Knight::Knight(int color)

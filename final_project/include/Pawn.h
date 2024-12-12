@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "Pieces.h"
+#include "Square.h"
 
 class Pawn : public Pieces
 {

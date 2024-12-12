@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Pieces.h"
 #include "Pawn.h"
+#include "Game.h"
 
 Pawn::Pawn(int color)
 {

@@ -2,6 +2,8 @@
 #include "Pieces.h"
 #include <vector>
 #include "Rook.h"
+#include "Game.h"
+
 using namespace std;
 
 Rook::Rook(int color)

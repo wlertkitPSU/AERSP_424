@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Pieces.h"
 #include "Queen.h"
+#include "Game.h"
 
 Queen::Queen(int color)
 {

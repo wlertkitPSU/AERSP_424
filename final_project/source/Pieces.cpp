@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "Pieces.h"
+#include "Square.h"
 using namespace std;
 
 // Checks if the move is valid for the current piece
