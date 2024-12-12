@@ -15,8 +15,8 @@ if [ ! -d "SDL" ]; then
   rm -rf build install
   mkdir -p build install
   cd build
-  cmake -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/SDL/install -DCMAKE_BUILD_TYPE=Release ..
-  cmake --build . -j 4 --config Release
+  cmake -G Ninja -DCMAKE_INSTALL_PREFIX=${project_root_dir}/third_party/SDL/install -DCMAKE_BUILD_TYPE=Release ..
+  cmake --build . -j 4
   cmake --install .
 fi
 echo "SDL installed!"
@@ -27,8 +27,9 @@ cd ${project_root_dir}
 rm -rf ${project_root_dir}/build
 mkdir -p ${project_root_dir}/build
 cd ${project_root_dir}/build
-cmake ..
+cmake -G Ninja ..
 cmake --build . -j 4
 cmake --install .
 echo "Build complete!"
-./build/chess
+
+./chess.exe

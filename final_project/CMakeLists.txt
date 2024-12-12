@@ -1,16 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(chess)
 set(CMAKE_CXX_STANDARD 17)
-
-if(MSVC)
-    # MSVC warning levels
-    add_compile_options(/W4)
-    add_compile_options(/WX)
-    add_compile_options(/permissive-)
-else()
-    # For GCC/Clang compilers
-    add_compile_options(-Wall -Wpedantic -Wextra)
-endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wpedantic -Wextra")
 
 # External Libraries
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/SDL/install")
@@ -30,3 +21,12 @@ file(GLOB all_SRCS
 
 add_executable(${CMAKE_PROJECT_NAME} ${all_SRCS})
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL3::SDL3)
+
+
+add_custom_command(TARGET chess
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   ${PROJECT_SOURCE_DIR}/third_party/SDL/install/bin/SDL3.dll
+                   $<TARGET_FILE_DIR:chess>/SDL3.dll
+                   COMMENT "Copy SLD3.Dll into build folder"
+                   )
