@@ -23,11 +23,9 @@ public:
 
     // Game functions
     void Start();
-    void DrawPossibleMoves();
     bool SelectPiece(Square Cells[][8], int x, int y);
     void moveSelected(Square Cells[][8], int x, int y);
     void gameOver();
-    void SetRightSideofWindow();
     void printBoard() const;
     void run(); // Handles user inputs and main game loop
 
