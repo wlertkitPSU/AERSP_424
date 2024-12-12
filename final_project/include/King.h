@@ -1,5 +1,8 @@
-#pragma once
+#ifndef KING_H
+#define KING_H
+
 #include <vector>
+#include "Square.h"
 #include "Pieces.h"
 #include "Square.h"
 
@@ -12,5 +15,8 @@ public:
     bool isCheckmate(Square Cells[][8], int x, int y);
     vector<Square> getMoves(Square cells[][8], int x, int y);
 
+protected:
+private:
 };
 
+#endif // KING_H

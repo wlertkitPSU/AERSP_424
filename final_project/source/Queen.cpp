@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Game.h"
 #include "Pieces.h"
 #include "Queen.h"
 #include "Game.h"
@@ -7,23 +8,14 @@ Queen::Queen(int color)
 {
     isWhite = color;
     isAlive = true;
-    
-    if (color == 0) {
-    x = 0;
-    } else {
-    x = 7;
-    }
-    
+    x = (color == 0) ? 0 : 7;
     y = 3;
-    occupying_piece_value = 2;
+    occupied_value = 2;
 }
 
-// Checking all possible Queen moves
 vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
 {
     possibleMoves.clear();
-
-    // Down right
     int a = x + 1, b = y + 1;
     while (a <= 7 && b <= 7)
     {
@@ -39,8 +31,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         a++;
         b++;
     }
-
-    // Down Left
     a = x + 1, b = y - 1;
     while (a <= 7 && b >= 0)
     {
@@ -56,7 +46,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         a++;
         b--;
     }
-    // up left
     a = x - 1, b = y - 1;
     while (a >= 0 && b >= 0)
     {
@@ -72,7 +61,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         a--;
         b--;
     }
-    // up right
     a = x - 1, b = y + 1;
     while (a >= 0 && b <= 7)
     {
@@ -88,7 +76,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         a--;
         b++;
     }
-    // up
     int r = x - 1;
     while (r >= 0)
     {
@@ -103,7 +90,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         }
         r--;
     }
-    // down
     r = x + 1;
     while (r <= 7)
     {
@@ -118,7 +104,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         }
         r++;
     }
-    // left
     r = y - 1;
     while (r >= 0)
     {
@@ -133,7 +118,6 @@ vector<Square> Queen::getMoves(Square cells[][8], int x, int y)
         }
         r--;
     }
-    // right
     r = y + 1;
     while (r <= 7)
     {

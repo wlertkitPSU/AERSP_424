@@ -1,6 +1,13 @@
 #include "game.h"
 #include "square.h"
 #include "Pieces.h"
+#include "Bishop.h"
+#include "King.h"
+#include "Knight.h"
+#include "Pawn.h"
+#include "Pieces.h"
+#include "Queen.h"
+#include "Rook.h"
 
 // Constructor
 Game::Game() {

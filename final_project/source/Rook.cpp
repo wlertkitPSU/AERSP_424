@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Game.h"
 #include "Pieces.h"
 #include <vector>
 #include "Rook.h"
@@ -10,23 +11,13 @@ Rook::Rook(int color)
 {
     isWhite = color;
     isAlive = true;
-
-    
-    occupying_piece_value = 1;
-    if (color == 0) {
-    x = 0;
-    } else {
-    x = 7;
-    }
-
+    occupied_value = 1;
+    x = (color == 0) ? 0 : 7;
 }
 
-//Finds all possible rook moves
 vector<Square> Rook::getMoves(Square cells[][8], int x, int y)
 {
     possibleMoves.clear();
-
-    //checks down
     int r = x - 1;
     while (r >= 0)
     {
@@ -41,7 +32,6 @@ vector<Square> Rook::getMoves(Square cells[][8], int x, int y)
         }
         r--;
     }
-    //checks up
     r = x + 1;
     while (r <= 7)
     {
@@ -56,7 +46,6 @@ vector<Square> Rook::getMoves(Square cells[][8], int x, int y)
         }
         r++;
     }
-    //checks left
     r = y - 1;
     while (r >= 0)
     {
@@ -71,7 +60,6 @@ vector<Square> Rook::getMoves(Square cells[][8], int x, int y)
         }
         r--;
     }
-    //checks right
     r = y + 1;
     while (r <= 7)
     {

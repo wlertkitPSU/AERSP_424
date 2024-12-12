@@ -1,4 +1,5 @@
-#pragma once
+#ifndef QUEEN_H
+#define QUEEN_H
 
 #include <vector>
 #include "Pieces.h"
@@ -11,5 +12,8 @@ public:
     Queen(int);
     vector<Square> getMoves(Square cells[][8], int x, int y);
 
+protected:
+private:
 };
 
+#endif // QUEEN_H
