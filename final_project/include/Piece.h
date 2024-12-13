@@ -18,11 +18,11 @@ const char KNIGHT = 'N';
 const char PAWN = 'P';
 
 // Constants to represent potential movement outcomes.
-const int BAD = -1;      // The piece cannot be moved to this square.
-const int GOOD = 0;      // The piece can be moved to this square.
-const int CHECK = 1;     // The enemy player's king is vulnerable and needs to be protected.
-const int CHECKMATE = 2; // The enemy player's king is vulnerable and cannot be protected. You win.
-const int STALEMATE = 3; // The enemy player's king isn't vulnerable, but cannot make a valid move. Nobody wins. Draw.
+const int BAD = -1;
+const int GOOD = 0;
+const int CHECK = 1;
+const int CHECKMATE = 2;
+const int STALEMATE = 3;
 
 // Functions.
 bool checkBounds(pair<int, int> location);
