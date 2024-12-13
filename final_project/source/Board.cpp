@@ -137,7 +137,7 @@ void Board::play_user()
         if (draw_agree)
         {
             // Second player has agreed to a draw, and both players forfeit the game.
-            if (first == "draw" || first == "stalemate" || first == "agree" || first == "yes" || first == "y")
+            if (first == "draw")
             {
                 std::cout << "\nBoth sides have agreed to a draw.\n"
                      << "Nobody wins." << endl;
