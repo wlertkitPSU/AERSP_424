@@ -10,11 +10,9 @@
 #include "Pawn.h"
 #include "Square.h"
 
-// The actual chess board
-// Contains 8 rows and 8 columns of squares
+// The actual chess board (contains 8 rows and 8 columns of squares)
 // A square can either be occupied or not occupied by a piece
-// The board also keeps track of all the uncaptured white pieces,
-// uncaptured black pieces, captured white pieces, and captured black pieces
+// Board also keeps track of all the uncaptured white pieces, uncaptured black pieces, captured white pieces, and captured black pieces
 class Board
 {
 private:
@@ -27,11 +25,9 @@ private:
     vector<char> _black_captured;    // Names of all black pieces that have been captured by white
 
 public:
-    // Constructor and destructor
     Board();
     ~Board();
 
-    // Called by board's default constructor
     void init_pieces(); // Initializes the pieces by creating all the initial chess pieces and adding them to _white and _black
     void init_board();  // Initializes the board by linking each initial square to its matching piece
 
