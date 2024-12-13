@@ -1,19 +1,21 @@
 #ifndef QUEEN_H
 #define QUEEN_H
 
+#include "Piece.h"
 #include <vector>
-#include "Pieces.h"
+#include <utility>
 
-using namespace std;
-
-class Queen : public Pieces
+class Queen : public Piece
 {
 public:
-    Queen(int);
-    vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor
+    Queen(char color, std::pair<int, int> location);
 
-protected:
-private:
+    // Returns all squares between the queen's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+
+    // Returns all possible squares the queen can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
 };
 
-#endif // QUEEN_H
+#endif
