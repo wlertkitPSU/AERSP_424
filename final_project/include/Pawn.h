@@ -1,18 +1,20 @@
 #ifndef PAWN_H
 #define PAWN_H
 
-#include <iostream>
+#include "Piece.h"
 #include <vector>
-#include "Square.h"
-#include "Pieces.h"
 
-class Pawn : public Pieces
+class Pawn : public Piece
 {
 public:
-    Pawn(int);
-    vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor
+    Pawn(char color, std::pair<int, int> location);
 
-protected:
+    // Returns all squares between the pawn's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+
+    // Returns all possible squares the pawn can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
 };
 
-#endif // PAWN_H
+#endif
