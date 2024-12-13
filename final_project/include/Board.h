@@ -2,6 +2,12 @@
 #define BOARD_H
 
 #include "Piece.h"
+#include "King.h"
+#include "Queen.h"
+#include "Rook.h"
+#include "Bishop.h"
+#include "Knight.h"
+#include "Pawn.h"
 #include "Square.h"
 
 // The actual chess board
