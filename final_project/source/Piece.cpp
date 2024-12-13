@@ -13,9 +13,6 @@ Piece::Piece() : _color(0), _name(0), _location({-1, -1}) {}
 Piece::Piece(char color, char name, pair<int, int> location)
     : _color(color), _name(name), _location(location) {}
 
-// Destructor
-Piece::~Piece(){}
-
 // Getter for color.
 char Piece::color() const
 {

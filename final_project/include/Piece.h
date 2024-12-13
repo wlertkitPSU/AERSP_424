@@ -42,7 +42,7 @@ public:
 
     // Destructor
     virtual ~Piece() {}
-    
+
     // Getters
     char color() const;                                                                       // Return the color char of the piece.
     char name() const;                                                                        // Return the name char of the piece.
@@ -55,5 +55,11 @@ public:
     virtual vector<pair<int, int>> moveCheck(pair<int, int> move_to) = 0;                     // Pure virtual function for returning the moves of a piece in a single direction.
     virtual vector<vector<pair<int, int>>> allMoveCheck() = 0;                                // Pure virtual function for returning all the moves of a piece.
 };
+
+// Operator overload for comparing two pieces.
+inline bool operator==(const Piece *lhs, const Piece &rhs)
+{
+    return lhs->fullName() == rhs.fullName() && lhs->location() == rhs.location();
+}
 
 #endif
