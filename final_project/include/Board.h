@@ -48,7 +48,6 @@ public:
     int is_check(Piece *move_from_piece);                                                      // Checks if the player is in check. Returns 0 if good, 1 if check, 2 if checkmate, 3 if stalemate.
 };
 
-void pressEnterToContinue();                   // Pauses the game until the player presses the ENTER key on their keyboard
 bool checkMoveCoords(char first, char second); // Checks to see if the coordinates given are within the boundaries of the 8x8 chess board
 
 #endif
