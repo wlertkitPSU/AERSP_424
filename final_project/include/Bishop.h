@@ -1,19 +1,21 @@
 #ifndef BISHOP_H
 #define BISHOP_H
 
-#include <iostream>
+#include "Piece.h"
 #include <vector>
-#include "Pieces.h"
-using namespace std;
+#include <utility>
 
-class Bishop : public Pieces
+class Bishop : public Piece
 {
 public:
-    Bishop(int color);
-    vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor
+    Bishop(char color, std::pair<int, int> location);
 
-protected:
-private:
+    // Returns all squares between the bishop's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+
+    // Returns all possible squares the bishop can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
 };
 
-#endif // BISHOP_H
+#endif
