@@ -1,79 +1,117 @@
-#include <iostream>
-#include "Game.h"
-#include "Pieces.h"
-#include "Square.h"
-#include <vector>
 #include "Rook.h"
-#include "Game.h"
 
-using namespace std;
+// Constructor.
+Rook::Rook(char color, std::pair<int, int> location) : Piece(color, ROOK, location) {}
 
-Rook::Rook(int color)
+// Returns all squares between the rook's current square and the square being moved to.
+std::vector<std::pair<int, int>> Rook::moveCheck(std::pair<int, int> move_to)
 {
-    isWhite = color;
-    isAlive = true;
-    occupied_value = 1;
-    x = (color == 0) ? 0 : 7;
+    std::pair<int, int> to_add;
+    std::vector<std::pair<int, int>> move_to_list;
+
+    // Move up many spaces.
+    to_add = {location().first, location().second};
+    while (checkBounds(to_add))
+    {
+        to_add = {to_add.first + 1, to_add.second};
+        move_to_list.push_back(to_add);
+
+        if (to_add == move_to)
+        {
+            return move_to_list;
+        }
+    }
+
+    // Move right many spaces.
+    move_to_list.clear();
+    to_add = {location().first, location().second};
+    while (checkBounds(to_add))
+    {
+        to_add = {to_add.first, to_add.second + 1};
+        move_to_list.push_back(to_add);
+
+        if (to_add == move_to)
+        {
+            return move_to_list;
+        }
+    }
+
+    // Move down many spaces.
+    move_to_list.clear();
+    to_add = {location().first, location().second};
+    while (checkBounds(to_add))
+    {
+        to_add = {to_add.first - 1, to_add.second};
+        move_to_list.push_back(to_add);
+
+        if (to_add == move_to)
+        {
+            return move_to_list;
+        }
+    }
+
+    // Move left many spaces.
+    move_to_list.clear();
+    to_add = {location().first, location().second};
+    while (checkBounds(to_add))
+    {
+        to_add = {to_add.first, to_add.second - 1};
+        move_to_list.push_back(to_add);
+
+        if (to_add == move_to)
+        {
+            return move_to_list;
+        }
+    }
+
+    return move_to_list;
 }
 
-vector<Square> Rook::getMoves(Square cells[][8], int x, int y)
+// Returns all possible squares the rook can move to.
+std::vector<std::vector<std::pair<int, int>>> Rook::allMoveCheck()
 {
-    possibleMoves.clear();
-    int r = x - 1;
-    while (r >= 0)
+    std::pair<int, int> to_add;
+    std::vector<std::vector<std::pair<int, int>>> move_to_list;
+
+    // Move up many spaces.
+    std::vector<std::pair<int, int>> up;
+    to_add = {location().first + 1, location().second};
+    while (checkBounds(to_add))
     {
-        if (cells[r][y].occupied_value == 0)
-            possibleMoves.push_back(cells[r][y]);
-        else if (cells[r][y].occupied_color == cells[x][y].occupied_color)
-            break;
-        else if (cells[r][y].occupied_color != cells[x][y].occupied_color)
-        {
-            possibleMoves.push_back(cells[r][y]);
-            break;
-        }
-        r--;
+        up.push_back(to_add);
+        to_add = {to_add.first + 1, to_add.second};
     }
-    r = x + 1;
-    while (r <= 7)
+    move_to_list.push_back(up);
+
+    // Move right many spaces.
+    std::vector<std::pair<int, int>> right;
+    to_add = {location().first, location().second + 1};
+    while (checkBounds(to_add))
     {
-        if (cells[r][y].occupied_value == 0)
-            possibleMoves.push_back(cells[r][y]);
-        else if (cells[r][y].occupied_color == cells[x][y].occupied_color)
-            break;
-        else if (cells[r][y].occupied_color != cells[x][y].occupied_color)
-        {
-            possibleMoves.push_back(cells[r][y]);
-            break;
-        }
-        r++;
+        right.push_back(to_add);
+        to_add = {to_add.first, to_add.second + 1};
     }
-    r = y - 1;
-    while (r >= 0)
+    move_to_list.push_back(right);
+
+    // Move down many spaces.
+    std::vector<std::pair<int, int>> down;
+    to_add = {location().first - 1, location().second};
+    while (checkBounds(to_add))
     {
-        if (cells[x][r].occupied_value == 0)
-            possibleMoves.push_back(cells[x][r]);
-        else if (cells[x][r].occupied_color == cells[x][y].occupied_color)
-            break;
-        else if (cells[x][r].occupied_color != cells[x][y].occupied_color)
-        {
-            possibleMoves.push_back(cells[x][r]);
-            break;
-        }
-        r--;
+        down.push_back(to_add);
+        to_add = {to_add.first - 1, to_add.second};
     }
-    r = y + 1;
-    while (r <= 7)
+    move_to_list.push_back(down);
+
+    // Move left many spaces.
+    std::vector<std::pair<int, int>> left;
+    to_add = {location().first, location().second - 1};
+    while (checkBounds(to_add))
     {
-        if (cells[x][r].occupied_value == 0)
-            possibleMoves.push_back(cells[x][r]);
-        else if (cells[x][r].occupied_color == cells[x][y].occupied_color)
-            break;
-        else if (cells[x][r].occupied_color != cells[x][y].occupied_color)
-        {
-            possibleMoves.push_back(cells[x][r]);
-            break;
-        }
-        r++;
+        left.push_back(to_add);
+        to_add = {to_add.first, to_add.second - 1};
     }
-    return possibleMoves;
+    move_to_list.push_back(left);
+
+    return move_to_list;
 }

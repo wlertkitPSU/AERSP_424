@@ -1,17 +1,21 @@
 #ifndef ROOK_H
 #define ROOK_H
-#include "Pieces.h"
-#include "square.h"
+
+#include "Piece.h"
 #include <vector>
-using namespace std;
-class Rook : public Pieces
+#include <utility>
+
+class Rook : public Piece
 {
 public:
-  Rook(int);
-  vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor.
+    Rook(char color, std::pair<int, int> location);
 
-protected:
-private:
+    // Returns all squares between the rook's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to) override;
+
+    // Returns all possible squares the rook can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck() override;
 };
 
-#endif // ROOK_H
+#endif
