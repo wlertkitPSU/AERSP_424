@@ -1,25 +1,51 @@
-#include <iostream>
-#include <vector>
-#include "Pieces.h"
-#include "Square.h"
-using namespace std;
+#include "Piece.h"
 
-// Checks if the move is valid for the current piece
-bool Pieces::isValidMove(int destX, int destY, Square Cells[][8]) {
-    // Get possible moves for the piece
-    std::vector<Square> moves = getMoves(Cells, x, y);
-    
-    // Check if the destination square is in the list of possible moves
-    for (const Square& move : moves) {
-        if (move.x == destX && move.y == destY) {
-            return true;
-        }
-    }
-    return false;
+// Check if a given location is within the bounds of the chessboard.
+bool checkBounds(pair<int, int> location)
+{
+    return location.first >= 0 && location.first < 8 && location.second >= 0 && location.second < 8;
 }
 
-// Updates the piece's position
-void Pieces::setPosition(int newX, int newY) {
-    x = newX;
-    y = newY;
+// Default constructor.
+Piece::Piece() : _color(0), _name(0), _location({-1, -1}) {}
+
+// Constructor for a specific piece.
+Piece::Piece(char color, char name, pair<int, int> location)
+    : _color(color), _name(name), _location(location) {}
+
+// Getter for color.
+char Piece::color() const
+{
+    return _color;
+}
+
+// Getter for name.
+char Piece::name() const
+{
+    return _name;
+}
+
+// Getter for full name (color + name).
+string Piece::fullName() const
+{
+    return string(1, _color) + _name;
+}
+
+// Getter for location.
+pair<int, int> Piece::location() const
+{
+    return _location;
+}
+
+// Setter for location.
+void Piece::move(pair<int, int> location)
+{
+    if (checkBounds(location))
+    {
+        _location = location;
+    }
+    else
+    {
+        cerr << "Error: Attempted to move to an out-of-bounds location." << endl;
+    }
 }

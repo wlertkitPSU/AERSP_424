@@ -1,26 +1,68 @@
-#pragma once
+#ifndef PIECE_H
+#define PIECE_H
 
 #include <iostream>
 #include <vector>
-#include "Square.h"
 using namespace std;
 
-class Pieces
+// Constants to represent color names.
+const char WHITE = 'W';
+const char BLACK = 'B';
+
+// Constants to represent piece names.
+const char KING = 'K';
+const char QUEEN = 'Q';
+const char ROOK = 'R';
+const char BISHOP = 'B';
+const char KNIGHT = 'N';
+const char PAWN = 'P';
+
+// Constants to represent potential movement outcomes.
+const int BAD = -1;      // The piece cannot be moved to this square.
+const int GOOD = 0;      // The piece can be moved to this square.
+const int CHECK = 1;     // The enemy player's king is vulnerable and needs to be protected.
+const int CHECKMATE = 2; // The enemy player's king is vulnerable and cannot be protected. You win.
+const int STALEMATE = 3; // The enemy player's king isn't vulnerable, but cannot make a valid move. Nobody wins. Draw.
+
+// Functions.
+bool checkBounds(pair<int, int> location);
+
+inline bool operator==(const Piece *lhs, const Piece &rhs)
 {
+    return lhs->fullName() == rhs.fullName() && lhs->location() == rhs.location();
+}
+
+// Return true if location is within 8x8 grid of chess board.
+inline bool checkBounds(pair<int, int> location)
+{
+    return location.first >= 0 && location.second >= 0 && location.first <= 7 && location.second <= 7;
+}
+// It's important to remember the coords of a piece are dictated by [row][column], or [y][x].
+
+class Piece
+{
+private:
+    // Attributes
+    char _color;              // The color of the piece. Can be 'W' or 'B'.
+    char _name;               // The name of the piece. Can be 'K', 'Q', 'R', 'B', 'N', or 'P'
+    pair<int, int> _location; // Current location of the piece on the chess board. Bottom left is {0,0}, top right is {7,7}.
+
 public:
-    
-    int x, y;
-    bool isAlive;
-    bool isWhite;
-    bool occupied_color;
-    int occupied_value;
+    // Constructors.
+    Piece();                                                                                   // Default constructor.
+    Piece(char color, char name, pair<int, int> location);                                     // Constructor for a specific piece.
 
-    vector<Square> possibleMoves;
-    virtual vector<Square> getMoves(Square Cells[][8], int x, int y) = 0;
+    // Getters
+    char color() const;                                                                       // Return the color char of the piece.
+    char name() const;                                                                        // Return the name char of the piece.
+    string fullName() const;                                                                  // Return the color+name of the piece, giving it a unique name for that player's side.
+    pair<int, int> location() const;                                                          // Return the location pair of ints of the piece.
 
-    bool isValidMove(int destX, int destY, Square Cells[][8]); // Validates the move
-    void setPosition(int newX, int newY); // Updates the piece's position
-    
-    
+    // Setters
+    void move(pair<int, int> location);                                                       // Sets the location of the piece to the argument's value.
+
+    virtual vector<pair<int, int>> moveCheck(pair<int, int> move_to) = 0;                     // Pure virtual function for returning the moves of a piece in a single direction.
+    virtual vector<vector<pair<int, int>>> allMoveCheck() = 0;                                // Pure virtual function for returning all the moves of a piece.
 };
 
+#endif
