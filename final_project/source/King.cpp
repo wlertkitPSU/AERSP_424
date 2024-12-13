@@ -1,218 +1,156 @@
-#include <iostream>
-#include <vector>
-#include "Square.h"
-#include "Pieces.h"
 #include "King.h"
-#include "Square.h"
-using namespace std;
 
-King::King(int color)
+King::King(char color, std::pair<int, int> location)
+    : Piece(color, KING, location) {}
+
+std::vector<std::pair<int, int>> King::moveCheck(std::pair<int, int> move_to)
 {
-    isWhite = color;
-    isAlive = true;
-    x = (color == 0) ? 0 : 7;
-    y = 4;
-    occupied_value = 3;
+    std::pair<int, int> to_add;
+    std::vector<std::pair<int, int>> move_to_list;
+
+    // Move up one space.
+    to_add = {location().first + 1, location().second};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move diagonally top right one space.
+    to_add = {location().first + 1, location().second + 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move right one space.
+    to_add = {location().first, location().second + 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move diagonally bottom right one space.
+    to_add = {location().first - 1, location().second + 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move down one space.
+    to_add = {location().first - 1, location().second};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move diagonally bottom left one space.
+    to_add = {location().first - 1, location().second - 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move left one space.
+    to_add = {location().first, location().second - 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    // Move diagonally top left one space.
+    to_add = {location().first + 1, location().second - 1};
+    if (to_add == move_to)
+    {
+        move_to_list.push_back(to_add);
+        return move_to_list;
+    }
+
+    return move_to_list;
 }
 
-vector<Square> King::getMoves(Square Cells[][8], int x, int y)
+std::vector<std::vector<std::pair<int, int>>> King::allMoveCheck()
 {
-    possibleMoves.clear();
-    int dx[] = {1, 1, 1, -1, -1, -1, 0, 0}; // all possible moves.
-    int dy[] = {1, -1, 0, -1, 1, 0, -1, 1}; // all possible moves.
-    for (int i = 0; i < 8; i++)
-    {
-        if (x + dx[i] > 7 || x + dx[i] < 0)
-            continue;
-        if (y + dy[i] > 7 || y + dy[i] < 0)
-            continue;
-        if (Cells[x + dx[i]][y + dy[i]].occupied_color == Cells[x][y].occupied_color)
-            continue;
-        possibleMoves.push_back(Cells[x + dx[i]][y + dy[i]]);
-    }
-    return possibleMoves;
-}
+    std::pair<int, int> to_add;
+    std::vector<std::vector<std::pair<int, int>>> move_to_list;
 
-bool King::isCheck(Square Cells[][8], int x, int y)
-{
-    int r = x + 1;
-    // below four loops are to check if king is being attacked from all four dieections
-    while (r < 8)
+    // Move up one space.
+    to_add = {location().first + 1, location().second};
+    if (checkBounds(to_add))
     {
-        if (Cells[r][y].occupied_color == 0)
-            continue;
-        else if (Cells[r][y].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[r][y].occupied_value == 2 || Cells[r][y].occupied_value == 1)
-                return true;
-            else
-                break;
-        }
-        r++;
+        std::vector<std::pair<int, int>> up;
+        up.push_back(to_add);
+        move_to_list.push_back(up);
     }
-    r = x - 1;
-    while (r >= 0)
-    {
-        if (Cells[r][y].occupied_color == 0)
-            continue;
-        else if (Cells[r][y].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[r][y].occupied_value == 2 || Cells[r][y].occupied_value == 1)
-                return true;
-            else
-                break;
-        }
-        r--;
-    }
-    r = y + 1;
-    while (r < 8)
-    {
-        if (Cells[x][r].occupied_color == 0)
-            continue;
-        else if (Cells[x][r].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[x][r].occupied_value == 2 || Cells[r][y].occupied_value == 1)
-                return true;
-            else
-                break;
-        }
-        r++;
-    }
-    r = y - 1;
-    while (r >= 0)
-    {
-        if (Cells[x][r].occupied_color == 0)
-            continue;
-        else if (Cells[x][r].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[x][r].occupied_value == 2 || Cells[r][y].occupied_value == 1)
-                return true;
-            else
-                break;
-        }
-        r--;
-    }
-    // below four loops are to check if it is being atteacked from diagonals
-    int a = x + 1, b = y + 1;
-    while (a < 8 && b < 8)
-    {
-        if (Cells[a][b].occupied_color == 0)
-            continue;
-        else if (Cells[a][b].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[a][b].occupied_value == 2 || Cells[a][b].occupied_value == -2)
-                return true;
-            else
-                break;
-        }
-        a++;
-        b++;
-    }
-    a = x + 1, b = y - 1;
-    while (a < 8 && b >= 0)
-    {
-        if (Cells[a][b].occupied_color == 0)
-            continue;
-        else if (Cells[a][b].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[a][b].occupied_value == 2 || Cells[a][b].occupied_value == -2)
-                return true;
-            else
-                break;
-        }
-        a++;
-        b--;
-    }
-    a = x - 1, b = y + 1;
-    while (a >= 0 && b < 8)
-    {
-        if (Cells[a][b].occupied_color == 0)
-            continue;
-        else if (Cells[a][b].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[a][b].occupied_value == 2 || Cells[a][b].occupied_value == -2)
-                return true;
-            else
-                break;
-        }
-        a--;
-        b++;
-    }
-    a = x - 1, b - y - 1;
-    while (a >= 0 && b >= 0)
-    {
-        if (Cells[a][b].occupied_color == 0)
-            continue;
-        else if (Cells[a][b].occupied_color == Cells[x][y].occupied_color)
-            break;
-        else
-        {
-            if (Cells[a][b].occupied_value == 2 || Cells[a][b].occupied_value == -2)
-                return true;
-            else
-                break;
-        }
-        a--;
-        b--;
-    }
-    // loop to check if the king is being attacked by another king
-    int dx[] = {0, 0, 1, 1, 1, -1, -1, -1};
-    int dy[] = {1, -1, 1, -1, 0, 0, -1, 1};
-    for (int i = 0; i < 8; i++)
-    {
-        if (Cells[x + dx[i]][y + dy[i]].occupied_color != Cells[x][y].occupied_color && Cells[x + dx[i]][y + dy[i]].occupied_value == 3)
-            return true;
-    }
-    // loop to check if the king is being attacked by knight of opposite colour
-    int xa[] = {2, 2, -2, -2, 1, 1, -1, -1}; // all possible moves.
-    int ya[] = {1, -1, 1, -1, 2, -2, 2, -2}; // all possible moves.
-    for (int i = 0; i < 8; i++)
-    {
-        if (Cells[x + xa[i]][y + ya[i]].occupied_color != Cells[x][y].occupied_color && Cells[x + xa[i]][y + ya[i]].occupied_value == -1)
-            return true;
-    }
-    // loops to check if the king is being attacked by the pawn of another colour
-    if (Cells[x][y].occupied_color == 1)
-    {
-        if (x < 8 && y > 0 && Cells[x + 1][y - 1].occupied_color == 0 && Cells[x + 1][y - 1].occupied_value == -3)
-            return true;
-        if (x < 8 && y < 8 && Cells[x + 1][y + 1].occupied_color == 0 && Cells[x + 1][y + 1].occupied_value == -3)
-            return true;
-    }
-    else if (Cells[x][y].occupied_color == -1)
-    {
-        if (x > 0 && y > 0 && Cells[x - 1][y - 1].occupied_color == 0 && Cells[x - 1][y - 1].occupied_value == -3)
-            return true;
-        if (x > 0 && y < 8 && Cells[x - 1][y + 1].occupied_color == 0 && Cells[x - 1][y + 1].occupied_value == -3)
-            return true;
-    }
-    return false;
-}
 
-bool King::isCheckmate(Square Cells[][8], int x, int y)
-{
-    if (!possibleMoves.size() && isCheck(Cells, x, y))
-        return true;
-    return false;
-}
+    // Move diagonally top right one space.
+    to_add = {location().first + 1, location().second + 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> diag_top_right;
+        diag_top_right.push_back(to_add);
+        move_to_list.push_back(diag_top_right);
+    }
 
-bool King::isStaleMate(Square Cells[][8], int x, int y)
-{
-    if (!possibleMoves.size() && !isCheck(Cells, x, y))
-        return true;
-    return false;
+    // Move right one space.
+    to_add = {location().first, location().second + 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> right;
+        right.push_back(to_add);
+        move_to_list.push_back(right);
+    }
+
+    // Move diagonally bottom right one space.
+    to_add = {location().first - 1, location().second + 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> diag_bottom_right;
+        diag_bottom_right.push_back(to_add);
+        move_to_list.push_back(diag_bottom_right);
+    }
+
+    // Move down one space.
+    to_add = {location().first - 1, location().second};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> down;
+        down.push_back(to_add);
+        move_to_list.push_back(down);
+    }
+
+    // Move diagonally bottom left one space.
+    to_add = {location().first - 1, location().second - 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> diag_bottom_left;
+        diag_bottom_left.push_back(to_add);
+        move_to_list.push_back(diag_bottom_left);
+    }
+
+    // Move left one space.
+    to_add = {location().first, location().second - 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> left;
+        left.push_back(to_add);
+        move_to_list.push_back(left);
+    }
+
+    // Move diagonally top left one space.
+    to_add = {location().first + 1, location().second - 1};
+    if (checkBounds(to_add))
+    {
+        std::vector<std::pair<int, int>> diag_top_left;
+        diag_top_left.push_back(to_add);
+        move_to_list.push_back(diag_top_left);
+    }
+
+    return move_to_list;
 }

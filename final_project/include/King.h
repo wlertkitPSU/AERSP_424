@@ -1,22 +1,21 @@
 #ifndef KING_H
 #define KING_H
 
+#include "Piece.h"
 #include <vector>
-#include "Square.h"
-#include "Pieces.h"
-#include "Square.h"
+#include <utility>
 
-class King : public Pieces
+class King : public Piece
 {
 public:
-    King(int);
-    bool isStaleMate(Square Cells[][8], int x, int y);
-    bool isCheck(Square Cells[][8], int x, int y);
-    bool isCheckmate(Square Cells[][8], int x, int y);
-    vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor
+    King(char color, std::pair<int, int> location);
 
-protected:
-private:
+    // Returns all squares between the king's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+
+    // Returns all possible squares the king can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
 };
 
-#endif // KING_H
+#endif
