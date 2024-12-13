@@ -1,20 +1,21 @@
 #ifndef KNIGHT_H
 #define KNIGHT_H
 
+#include "Piece.h"
 #include <vector>
-#include "Square.h"
-#include "Pieces.h"
-#include "Square.h"
-using namespace std;
+#include <utility>
 
-class Knight : public Pieces
+class Knight : public Piece
 {
 public:
-    Knight(int);
-    vector<Square> getMoves(Square cells[][8], int x, int y);
+    // Constructor.
+    Knight(char color, std::pair<int, int> location);
 
-protected:
-private:
+    // Returns all squares between the knight's current square and the square being moved to.
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+
+    // Returns all possible squares the knight can move to.
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
 };
 
-#endif // KNIGHT_H
+#endif
