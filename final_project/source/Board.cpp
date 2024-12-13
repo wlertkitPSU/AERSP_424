@@ -140,46 +140,6 @@ void Board::print_board(ostream &out) const
     out << "   a    b    c    d    e    f    g    h" << endl;
 }
 
-// Prints a list of the pieces on the board for both colors
-void Board::print_active(ostream &out) const
-{
-    out << "\nWhite Active: " << endl;
-    for (auto it = _white.begin(); it != _white.end(); ++it)
-    {
-        out << (*it)->name() << " ";
-    }
-
-    out << "\n";
-
-    out << "\nBlack Active: " << endl;
-    for (auto it = _black.begin(); it != _black.end(); ++it)
-    {
-        out << (*it)->name() << " ";
-    }
-
-    out << "\n";
-}
-
-// Prints a list of the captured pieces by both colors
-void Board::print_captured(ostream &out) const
-{
-    out << "\nCaptured by White: " << endl;
-    for (auto it = _black_captured.begin(); it != _black_captured.end(); ++it)
-    {
-        out << *it << " ";
-    }
-
-    out << "\n";
-
-    out << "\nCaptured by Black: " << endl;
-    for (auto it = _white_captured.begin(); it != _white_captured.end(); ++it)
-    {
-        out << *it << " ";
-    }
-
-    out << "\n";
-}
-
 // Playing a game between two people
 void Board::play_user()
 {
@@ -202,97 +162,8 @@ void Board::play_user()
 
         string first = commands[0];
 
-        // Checks if player whose turn it last was has attempted to declare a draw
-        if (draw_agree)
-        {
-            // Second player has agreed to a draw, and both players forfeit the game
-            if (first == "draw" || first == "stalemate" || first == "agree" || first == "yes" || first == "y")
-            {
-                cout << "\nBoth sides have agreed to a draw.\n"
-                     << "Nobody wins." << endl;
-                pressEnterToContinue();
-
-                return;
-            }
-
-            // Second player has disagreed to a draw, and the first player proceeds their turn as if nothing happened
-            else
-            {
-                cout << "\n"
-                     << turn_color << " disagreed to a draw.\n"
-                     << off_color << " will proceed their turn as normal." << endl;
-                pressEnterToContinue();
-
-                draw_agree = false;
-                string temp = turn_color;
-                turn_color = off_color;
-                off_color = temp;
-
-                continue;
-            }
-        }
-
-        // Exits program
-        if (first == "exit" || first == "quit" || first == "surrender" || first == "forfeit")
-        {
-            cout << "\n"
-                 << turn_color << " has given up.\n"
-                 << off_color << " wins!" << endl;
-            pressEnterToContinue();
-
-            return;
-        }
-
-        // Prints a list of potential commands the user can input
-        else if (first == "?" || first == "help" || first == "instructions" || first == "guide" || first == "commands" || first == "info")
-        {
-            cout << "\nCommands List:\n"
-                 << "  [letter][number] [letter][number]\n"
-                 << "    -  Moves a piece from the first location to the second location.\n"
-                 << "    -  Ex: If white has a pawn located at a2, they may input: a2 a4\n"
-                 << "  ? / help / instructions / guide / commands / info\n"
-                 << "    -  How'd you get here?\n"
-                 << "  exit / quit / surrender / forfeit\n"
-                 << "    -  Quit the game. Whoever's turn it is forfeits the match.\n"
-                 << "  active / alive\n"
-                 << "    -  Prints a list of the pieces that are still on the board for both white and black.\n"
-                 << "  captured / dead\n"
-                 << "    -  Prints a list of the pieces that have been captured by white and black.\n"
-                 << "  draw / stalemate\n"
-                 << "    - Both players must input this command on their turn to agree to a draw." << endl;
-            pressEnterToContinue();
-            continue;
-        }
-
-        // Prints a list of names of pieces currently on the board
-        else if (first == "active" || first == "alive")
-        {
-            print_active(cout);
-            pressEnterToContinue();
-            continue;
-        }
-
-        // Prints a list of names of pieces that have been captured
-        else if (first == "captured" || first == "dead")
-        {
-            print_captured(cout);
-            pressEnterToContinue();
-            continue;
-        }
-
-        // Declares a draw if the other player draws during their next turn then the match ends and nobody wins
-        else if (first == "draw" || first == "stalemate")
-        {
-            draw_agree = true;
-
-            cout << "\n"
-                 << turn_color << " has declared a draw.\n"
-                 << "If " << off_color << " also declares a draw, the game will end in a draw." << endl;
-            pressEnterToContinue();
-        }
-
         // If the command is two sets of coordinates
-        else if (commands.size() > 1)
+        if (commands.size() > 1)
         {
             string second = commands[1];
             int move_result = move(toupper(turn_color[0]), first, second);
@@ -344,7 +215,7 @@ void Board::play_user()
         // If there is an invalid command
         else
         {
-            cout << "\nInvalid command. Please input [?] without the brackets if you need help." << endl;
+            cout << "\nInvalid command." << endl;
             pressEnterToContinue();
 
             continue;

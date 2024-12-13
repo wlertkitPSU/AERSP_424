@@ -35,10 +35,8 @@ public:
     void init_pieces(); // Initializes the pieces by creating all the initial chess pieces and adding them to _white and _black
     void init_board();  // Initializes the board by linking each initial square to its matching piece
 
-    // Print functions
+    // Print board
     void print_board(ostream &out) const;    // Prints the board and its contents in a readable format
-    void print_active(ostream &out) const;   // Prints a list of the active pieces for both white and black
-    void print_captured(ostream &out) const; // Prints a list of the captured pieces for both white and black
 
     // Getters
     int rows() const { return _rows; }    // Retrieves the integer value for rows that board holds
