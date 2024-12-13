@@ -395,7 +395,7 @@ int Board::move(char color, string first, string second)
         // This is an invalid move (vulnerable king)
         if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
         {
-            std::cout << "\nMoving that piece there would render your king vulnerable to capture." << endl;
+            std::cout << "\nIllegal move, you are in check." << endl;
             
             return BAD;
         }
