@@ -27,18 +27,6 @@ const int STALEMATE = 3; // The enemy player's king isn't vulnerable, but cannot
 // Functions.
 bool checkBounds(pair<int, int> location);
 
-inline bool operator==(const Piece *lhs, const Piece &rhs)
-{
-    return lhs->fullName() == rhs.fullName() && lhs->location() == rhs.location();
-}
-
-// Return true if location is within 8x8 grid of chess board.
-inline bool checkBounds(pair<int, int> location)
-{
-    return location.first >= 0 && location.second >= 0 && location.first <= 7 && location.second <= 7;
-}
-// It's important to remember the coords of a piece are dictated by [row][column], or [y][x].
-
 class Piece
 {
 private:
@@ -52,6 +40,9 @@ public:
     Piece();                                                                                   // Default constructor.
     Piece(char color, char name, pair<int, int> location);                                     // Constructor for a specific piece.
 
+    // Destructor
+    virtual ~Piece() {}
+    
     // Getters
     char color() const;                                                                       // Return the color char of the piece.
     char name() const;                                                                        // Return the name char of the piece.
