@@ -72,43 +72,14 @@ void Board::init_board()
 // Prints out the current board
 void Board::print_board(ostream &out) const
 {
-    /* How a new board should look when printed to the console.
-    out << "  _______________________________________\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "8| BR | BN | BB | BQ | BK | BB | BN | BR |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "7| BP | BP | BP | BP | BP | BP | BP | BP |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "6|    |    |    |    |    |    |    |    |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "5|    |    |    |    |    |    |    |    |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "4|    |    |    |    |    |    |    |    |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "3|    |    |    |    |    |    |    |    |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "2| WP | WP | WP | WP | WP | WP | WP | WP |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << " |    |    |    |    |    |    |    |    |\n"
-        << "1| WR | WN | WB | WQ | WK | WB | WN | WR |\n"
-        << " |____|____|____|____|____|____|____|____|\n"
-        << "   a    b    c    d    e    f    g    h" << endl;
-    */
-
     // Prints the top border
-    out << "  _______________________________________" << endl;
+    out << "  _______________________________________________________" << endl;
 
     // Prints everything but the bottom letter coordinates
     for (int r = _rows - 1; r >= 0; r--)
     {
         // Prints the upper empty space of the squares and the number coordinate associated with that row
-        out << " |    |    |    |    |    |    |    |    |\n"
+        out << " |      |      |      |      |      |      |      |      |\n"
             << r + 1 << "|";
 
         // Prints the names of the pieces in the squares of this row
@@ -118,26 +89,26 @@ void Board::print_board(ostream &out) const
 
             // If this square contains a piece --> print its color and name
             if (_squares[r][c].occupied())
-            {
-                out << _squares[r][c].piece()->fullName();
+            { 
+                out << " " << _squares[r][c].piece()->fullName();
             }
 
             // If this square doesn't contain a piece --> print two blank spaces
             else
             {
-                out << "  ";
+                out << "   ";
             }
 
-            out << " |";
+            out << "  |";
         }
 
         // Prints the bottom portion of each square
         out << "\n"
-            << " |____|____|____|____|____|____|____|____|" << endl;
+            << " |______|______|______|______|______|______|______|______|" << endl;
     }
 
     // Prints the bottom letter coordinates
-    out << "   a    b    c    d    e    f    g    h" << endl;
+    out << "    a      b      c      d      e      f      g      h" << endl;
 }
 
 // Playing a game between two people
