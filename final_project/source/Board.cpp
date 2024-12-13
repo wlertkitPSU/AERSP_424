@@ -182,7 +182,7 @@ void Board::play_user()
                 cout << "\n"
                      << off_color << " is in check.\n"
                      << "Save your king!" << endl;
-                pressEnterToContinue();
+                
             }
 
             // The enemy is in checkmate and has lost the game
@@ -193,7 +193,7 @@ void Board::play_user()
                 cout << "\n"
                      << off_color << " is in checkmate.\n"
                      << turn_color << " wins!" << endl;
-                pressEnterToContinue();
+                
 
                 return;
             }
@@ -206,7 +206,7 @@ void Board::play_user()
                 cout << "\n"
                      << off_color << " is in stalemate.\n"
                      << "Nobody wins." << endl;
-                pressEnterToContinue();
+                
 
                 return;
             }
@@ -216,7 +216,7 @@ void Board::play_user()
         else
         {
             cout << "\nInvalid command." << endl;
-            pressEnterToContinue();
+            
 
             continue;
         }
@@ -235,18 +235,20 @@ int Board::move(char color, string first, string second)
     if (!checkMoveCoords(first[0], first[1]) || !checkMoveCoords(second[0], second[1]))
     {
         cout << "\nInvalid command. Please input [?] without the brackets if you need help." << endl;
-        pressEnterToContinue();
+        
         return BAD;
     }
 
-    // Ascii math necessary to obtain the square at the [letter][number] coordinates given
+    // Convert Ascii to coords
+    // a = 97, b = 98, ...
+    // '1' = 49, '2' = 50, ...
     Square *move_from = &_squares[first[1] - 49][first[0] - 97];
 
     // If there is no piece on the square
     if (!move_from->occupied())
     {
         cout << "\nThere is no piece on that square." << endl;
-        pressEnterToContinue();
+        
         return BAD;
     }
 
@@ -254,7 +256,7 @@ int Board::move(char color, string first, string second)
     if (move_from->piece()->color() != color)
     {
         cout << "\nThat's not your piece." << endl;
-        pressEnterToContinue();
+        
         return BAD;
     }
 
@@ -268,7 +270,7 @@ int Board::move(char color, string first, string second)
     if (move_to_list.empty() || move_to_list.back() != move_to_loc)
     {
         cout << "\nThat piece's movement doesn't allow it to reach that square." << endl;
-        pressEnterToContinue();
+        
         return BAD;
     }
 
@@ -279,7 +281,7 @@ int Board::move(char color, string first, string second)
         if (_squares[(*it).first][(*it).second].occupied())
         {
             cout << "\nThat piece is blocked from reaching that square." << endl;
-            pressEnterToContinue();
+            
             return BAD;
         }
     }
@@ -296,13 +298,13 @@ int Board::move(char color, string first, string second)
             if (move_to->piece()->color() == color)
             {
                 cout << "\nThat piece is blocked from reaching that square." << endl;
-                pressEnterToContinue();
+                
                 return BAD;
             }
 
             // If the pawn is trying to capture an enemy piece in front of it
             cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
-            pressEnterToContinue();
+            
             return BAD;
         }
 
@@ -310,7 +312,7 @@ int Board::move(char color, string first, string second)
         if (move_to->piece()->color() == color)
         {
             cout << "\nYou cannot capture your own piece." << endl;
-            pressEnterToContinue();
+            
             return BAD;
         }
         // If a piece is trying to capture an enemy piece
@@ -320,15 +322,11 @@ int Board::move(char color, string first, string second)
             if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
             {
                 cout << "\nTrying to capture that piece would render your king vulnerable to capture." << endl;
-                pressEnterToContinue();
+                
                 return BAD;
             }
 
             Piece &move_to_piece = *move_to->piece();
-
-            cout << "\n"
-                 << move_from->piece()->fullName() << " captured " << move_to->piece()->fullName() << endl;
-            move_to->remove_piece();
 
             // If piece being captured is white
             if (move_to->piece()->color() == WHITE)
@@ -351,6 +349,10 @@ int Board::move(char color, string first, string second)
                 delete *to_remove;
                 _black.erase(to_remove);
             }
+
+            cout << "\n"
+                 << move_from->piece()->fullName() << " captured " << move_to->piece()->fullName() << endl;
+            move_to->remove_piece();
         }
     }
 
@@ -362,7 +364,7 @@ int Board::move(char color, string first, string second)
         if (move_from->piece()->name() == PAWN && move_from->piece()->location().second != move_to_loc.second)
         {
             cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
-            pressEnterToContinue();
+            
             return BAD;
         }
 
@@ -370,7 +372,7 @@ int Board::move(char color, string first, string second)
         if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
         {
             cout << "\nMoving that piece there would render your king vulnerable to capture." << endl;
-            pressEnterToContinue();
+            
             return BAD;
         }
     }
@@ -724,14 +726,6 @@ int Board::is_check(Piece *move_from_piece)
 
     // The enemy player isn't in check, checkmate, or stalemate
     return GOOD;
-}
-
-// Tells user to hit enter to proceed
-void pressEnterToContinue()
-{
-    cout << "\nPress ENTER to continue";
-    cin.get();
-    cin.clear();
 }
 
 // Checks move bounds
