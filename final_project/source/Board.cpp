@@ -122,9 +122,9 @@ void Board::play_user()
     // Main game loop (will loop forever unless one player quits, both players draw, or one player is put in checkmate and loses)
     for (;;)
     {
-        print_board(cout);
+        print_board(std::cout);
 
-        cout << "\nIt is " << turn_color << "'s turn.\n"
+        std::cout << "\nIt is " << turn_color << "'s turn.\n"
              << "Please input a command: ";
         getline(cin, command);
         transform(command.begin(), command.end(), command.begin(), ::tolower);
@@ -132,6 +132,59 @@ void Board::play_user()
         vector<string> commands{istream_iterator<string>{iss}, istream_iterator<string>{}};
 
         string first = commands[0];
+
+        // If first player offers a draw
+        if (draw_agree)
+        {
+            // Second player has agreed to a draw, and both players forfeit the game.
+            if (first == "draw" || first == "stalemate" || first == "agree" || first == "yes" || first == "y")
+            {
+                std::cout << "\nBoth sides have agreed to a draw.\n"
+                     << "Nobody wins." << endl;
+
+
+                return;
+            }
+
+            // Second player has disagreed to a draw, and the first player proceeds their turn as if nothing happened.
+            else
+            {
+                std::cout << "\n"
+                     << turn_color << " disagreed to a draw.\n"
+                     << off_color << " will proceed their turn as normal." << endl;
+
+                draw_agree = false;
+                string temp = turn_color;
+                turn_color = off_color;
+                off_color = temp;
+
+                continue;
+            }
+        }
+
+        // Exit chess program or offer draw
+        if (first == "quit" || first == "resign")
+        {
+            std::cout << "\n"
+                 << turn_color << " has given up.\n"
+                 << off_color << " wins!" << endl;
+
+            return;   
+        } 
+        
+        else if (first == "draw" || first == "stalemate")
+        {
+            draw_agree = true;
+
+            cout << "\n"
+                 << turn_color << " has declared a draw.\n"
+                 << "If " << off_color << " also declares a draw, the game will end in a draw." << endl;
+            string temp = turn_color;
+            turn_color = off_color;
+            off_color = temp;
+            continue;
+        }
+
 
         // If the command is two sets of coordinates
         if (commands.size() > 1)
@@ -148,18 +201,18 @@ void Board::play_user()
             // The enemy is in check and needs to secure their king
             else if (move_result == CHECK)
             {
-                print_board(cout);
+                print_board(std::cout);
 
-                cout << "\n"
+                std::cout << "\n"
                      << off_color << " is in check.\n";
             }
 
             // The enemy is in checkmate and has lost the game
             else if (move_result == CHECKMATE)
             {
-                print_board(cout);
+                print_board(std::cout);
 
-                cout << "\n"
+                std::cout << "\n"
                      << off_color << " is in checkmate.\n"
                      << turn_color << " wins!" << endl;
                 
@@ -170,9 +223,9 @@ void Board::play_user()
             // The enemy is in stalemate and nobody wins the game
             else if (move_result == STALEMATE)
             {
-                print_board(cout);
+                print_board(std::cout);
 
-                cout << "\n"
+                std::cout << "\n"
                      << off_color << " is in stalemate.\n"
                      << "Nobody wins." << endl;
                 
@@ -184,7 +237,7 @@ void Board::play_user()
         // If there is an invalid command
         else
         {
-            cout << "\nInvalid command." << endl;
+            std::cout << "\nInvalid command." << endl;
             
 
             continue;
@@ -203,7 +256,7 @@ int Board::move(char color, string first, string second)
     // Checks that the coordinates given are within the boundaries of the 8x8 chess board
     if (!checkMoveCoords(first[0], first[1]) || !checkMoveCoords(second[0], second[1]))
     {
-        cout << "\nInvalid command." << endl;
+        std::cout << "\nInvalid command." << endl;
         
         return BAD;
     }
@@ -216,7 +269,7 @@ int Board::move(char color, string first, string second)
     // If there is no piece on the square
     if (!move_from->occupied())
     {
-        cout << "\nThere is no piece on that square." << endl;
+        std::cout << "\nThere is no piece on that square." << endl;
         
         return BAD;
     }
@@ -224,7 +277,7 @@ int Board::move(char color, string first, string second)
     // If there is an enemy piece on the square
     if (move_from->piece()->color() != color)
     {
-        cout << "\nThat's not your piece." << endl;
+        std::cout << "\nThat's not your piece." << endl;
         
         return BAD;
     }
@@ -238,7 +291,7 @@ int Board::move(char color, string first, string second)
     // Checks to confirm that the player has made a valid choice
     if (move_to_list.empty() || move_to_list.back() != move_to_loc)
     {
-        cout << "\nThat piece's movement doesn't allow it to reach that square." << endl;
+        std::cout << "\nThat piece's movement doesn't allow it to reach that square." << endl;
         
         return BAD;
     }
@@ -249,7 +302,7 @@ int Board::move(char color, string first, string second)
     {
         if (_squares[(*it).first][(*it).second].occupied())
         {
-            cout << "\nThat piece is blocked from reaching that square." << endl;
+            std::cout << "\nThat piece is blocked from reaching that square." << endl;
             
             return BAD;
         }
@@ -266,13 +319,13 @@ int Board::move(char color, string first, string second)
             // If the pawn is trying to move to a square occupied by a friendly piece
             if (move_to->piece()->color() == color)
             {
-                cout << "\nThat piece is blocked from reaching that square." << endl;
+                std::cout << "\nThat piece is blocked from reaching that square." << endl;
                 
                 return BAD;
             }
 
             // If the pawn is trying to capture an enemy piece in front of it
-            cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
+            std::cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
             
             return BAD;
         }
@@ -280,7 +333,7 @@ int Board::move(char color, string first, string second)
         // If a piece is trying to capture a friendly piece
         if (move_to->piece()->color() == color)
         {
-            cout << "\nYou cannot capture your own piece." << endl;
+            std::cout << "\nYou cannot capture your own piece." << endl;
             
             return BAD;
         }
@@ -290,7 +343,7 @@ int Board::move(char color, string first, string second)
             // This is an invalid move (vulnerable king)
             if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
             {
-                cout << "\nTrying to capture that piece would render your king vulnerable to capture." << endl;
+                std::cout << "\nTrying to capture that piece would render your king vulnerable to capture." << endl;
                 
                 return BAD;
             }
@@ -319,7 +372,7 @@ int Board::move(char color, string first, string second)
                 _black.erase(to_remove);
             }
 
-            cout << "\n"
+            std::cout << "\n"
                  << move_from->piece()->fullName() << " captured " << move_to->piece()->fullName() << endl;
             move_to->remove_piece();
         }
@@ -332,7 +385,7 @@ int Board::move(char color, string first, string second)
         // Pawn can only be moved diagonally one space if the space is occupied by an enemy piece
         if (move_from->piece()->name() == PAWN && move_from->piece()->location().second != move_to_loc.second)
         {
-            cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
+            std::cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
             
             return BAD;
         }
@@ -340,7 +393,7 @@ int Board::move(char color, string first, string second)
         // This is an invalid move (vulnerable king)
         if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
         {
-            cout << "\nMoving that piece there would render your king vulnerable to capture." << endl;
+            std::cout << "\nMoving that piece there would render your king vulnerable to capture." << endl;
             
             return BAD;
         }
