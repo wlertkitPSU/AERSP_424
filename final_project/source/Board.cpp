@@ -350,6 +350,8 @@ int Board::move(char color, string first, string second)
 
             Piece &move_to_piece = *move_to->piece();
 
+            string temp_name = move_to->piece()->fullName();
+
             // If piece being captured is white
             if (move_to->piece()->color() == WHITE)
             {
@@ -373,7 +375,7 @@ int Board::move(char color, string first, string second)
             }
 
             std::cout << "\n"
-                 << move_from->piece()->fullName() << " captured " << move_to->piece()->fullName() << endl;
+                 << move_from->piece()->fullName() << " captured " << temp_name << endl;
             move_to->remove_piece();
         }
     }
