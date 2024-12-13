@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BOARD_H
+#define BOARD_H
+
 #include "Piece.h"
 #include "Square.h"
 
@@ -48,3 +50,5 @@ public:
 
 void pressEnterToContinue();                   // Pauses the game until the player presses the ENTER key on their keyboard
 bool checkMoveCoords(char first, char second); // Checks to see if the coordinates given are within the boundaries of the 8x8 chess board
+
+#endif

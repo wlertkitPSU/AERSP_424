@@ -2,7 +2,6 @@
 #include "Game.h"
 #include "Pieces.h"
 #include "Pawn.h"
-#include "Game.h"
 
 Pawn::Pawn(int color)
 {

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "square.h"
+#include "Square.h"
 #include "Pieces.h"
 #include "King.h"
 #include "Bishop.h"
