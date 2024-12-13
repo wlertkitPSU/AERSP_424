@@ -3,9 +3,6 @@
 using namespace std;
 
 int main() {
-    for (;;)
-    {
-        Board board;
-        board.play_user();
-    }
+    Board board;
+    board.play_user();
 }
