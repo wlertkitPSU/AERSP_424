@@ -151,9 +151,7 @@ void Board::play_user()
                 print_board(cout);
 
                 cout << "\n"
-                     << off_color << " is in check.\n"
-                     << "Save your king!" << endl;
-                
+                     << off_color << " is in check.\n";
             }
 
             // The enemy is in checkmate and has lost the game
@@ -205,7 +203,7 @@ int Board::move(char color, string first, string second)
     // Checks that the coordinates given are within the boundaries of the 8x8 chess board
     if (!checkMoveCoords(first[0], first[1]) || !checkMoveCoords(second[0], second[1]))
     {
-        cout << "\nInvalid command. Please input [?] without the brackets if you need help." << endl;
+        cout << "\nInvalid command." << endl;
         
         return BAD;
     }
