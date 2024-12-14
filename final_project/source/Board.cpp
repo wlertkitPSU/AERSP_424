@@ -32,14 +32,14 @@ void Board::init_pieces()
 {
     int i = 0;
 
-    _white.push_back(new Rook(WHITE, {0, i}));      
-    _white.push_back(new Knight(WHITE, {0, i}));    
-    _white.push_back(new Bishop(WHITE, {0, i}));    
-    _white.push_back(new Queen(WHITE, {0, i}));     
-    _white.push_back(new King(WHITE, {0, i}));      
-    _white.push_back(new Bishop(WHITE, {0, i}));    
-    _white.push_back(new Knight(WHITE, {0, i}));    
-    _white.push_back(new Rook(WHITE, {0, i}));      
+    _white.push_back(new Rook(WHITE, {0, i}));
+    _white.push_back(new Knight(WHITE, {0, i}));
+    _white.push_back(new Bishop(WHITE, {0, i}));
+    _white.push_back(new Queen(WHITE, {0, i}));
+    _white.push_back(new King(WHITE, {0, i}));
+    _white.push_back(new Bishop(WHITE, {0, i}));
+    _white.push_back(new Knight(WHITE, {0, i}));
+    _white.push_back(new Rook(WHITE, {0, i}));
 
     _black.push_back(new Rook(BLACK, {7, i++}));
     _black.push_back(new Knight(BLACK, {7, i++}));
@@ -89,7 +89,7 @@ void Board::print_board(ostream &out) const
 
             // If this square contains a piece --> print its color and name
             if (_squares[r][c].occupied())
-            { 
+            {
                 out << " " << _squares[r][c].piece()->fullName();
             }
 
@@ -125,8 +125,12 @@ void Board::play_user()
         print_board(std::cout);
 
         std::cout << "\nIt is " << turn_color << "'s turn.\n"
-             << "Please input a command: ";
+                  << "Please input a command: ";
         getline(cin, command);
+        if (command.empty())
+        {
+            continue;
+        }
         transform(command.begin(), command.end(), command.begin(), ::tolower);
         istringstream iss(command);
         vector<string> commands{istream_iterator<string>{iss}, istream_iterator<string>{}};
@@ -140,8 +144,7 @@ void Board::play_user()
             if (first == "draw")
             {
                 std::cout << "\nBoth sides have agreed to a draw.\n"
-                     << "Nobody wins." << endl;
-
+                          << "Nobody wins." << endl;
 
                 return;
             }
@@ -150,8 +153,8 @@ void Board::play_user()
             else
             {
                 std::cout << "\n"
-                     << turn_color << " disagreed to a draw.\n"
-                     << off_color << " will proceed their turn as normal." << endl;
+                          << turn_color << " disagreed to a draw.\n"
+                          << off_color << " will proceed their turn as normal." << endl;
 
                 draw_agree = false;
                 string temp = turn_color;
@@ -166,12 +169,12 @@ void Board::play_user()
         if (first == "quit" || first == "resign")
         {
             std::cout << "\n"
-                 << turn_color << " has given up.\n"
-                 << off_color << " wins!" << endl;
+                      << turn_color << " has given up.\n"
+                      << off_color << " wins!" << endl;
 
-            return;   
-        } 
-        
+            return;
+        }
+
         else if (first == "draw" || first == "stalemate")
         {
             draw_agree = true;
@@ -184,7 +187,6 @@ void Board::play_user()
             off_color = temp;
             continue;
         }
-
 
         // If the command is two sets of coordinates
         if (commands.size() > 1)
@@ -204,7 +206,7 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                     << off_color << " is in check.\n";
+                          << off_color << " is in check.\n";
             }
 
             // The enemy is in checkmate and has lost the game
@@ -213,9 +215,8 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                     << off_color << " is in checkmate.\n"
-                     << turn_color << " wins!" << endl;
-                
+                          << off_color << " is in checkmate.\n"
+                          << turn_color << " wins!" << endl;
 
                 return;
             }
@@ -226,9 +227,8 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                     << off_color << " is in stalemate.\n"
-                     << "Nobody wins." << endl;
-                
+                          << off_color << " is in stalemate.\n"
+                          << "Nobody wins." << endl;
 
                 return;
             }
@@ -238,7 +238,6 @@ void Board::play_user()
         else
         {
             std::cout << "\nInvalid command." << endl;
-            
 
             continue;
         }
@@ -257,7 +256,7 @@ int Board::move(char color, string first, string second)
     if (!checkMoveCoords(first[0], first[1]) || !checkMoveCoords(second[0], second[1]))
     {
         std::cout << "\nInvalid command." << endl;
-        
+
         return BAD;
     }
 
@@ -270,7 +269,7 @@ int Board::move(char color, string first, string second)
     if (!move_from->occupied())
     {
         std::cout << "\nThere is no piece on that square." << endl;
-        
+
         return BAD;
     }
 
@@ -278,7 +277,7 @@ int Board::move(char color, string first, string second)
     if (move_from->piece()->color() != color)
     {
         std::cout << "\nThat's not your piece." << endl;
-        
+
         return BAD;
     }
 
@@ -292,7 +291,7 @@ int Board::move(char color, string first, string second)
     if (move_to_list.empty() || move_to_list.back() != move_to_loc)
     {
         std::cout << "\nThat piece's movement doesn't allow it to reach that square." << endl;
-        
+
         return BAD;
     }
 
@@ -303,7 +302,7 @@ int Board::move(char color, string first, string second)
         if (_squares[(*it).first][(*it).second].occupied())
         {
             std::cout << "\nThat piece is blocked from reaching that square." << endl;
-            
+
             return BAD;
         }
     }
@@ -320,13 +319,13 @@ int Board::move(char color, string first, string second)
             if (move_to->piece()->color() == color)
             {
                 std::cout << "\nThat piece is blocked from reaching that square." << endl;
-                
+
                 return BAD;
             }
 
             // If the pawn is trying to capture an enemy piece in front of it
             std::cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
-            
+
             return BAD;
         }
 
@@ -334,7 +333,7 @@ int Board::move(char color, string first, string second)
         if (move_to->piece()->color() == color)
         {
             std::cout << "\nYou cannot capture your own piece." << endl;
-            
+
             return BAD;
         }
         // If a piece is trying to capture an enemy piece
@@ -344,7 +343,7 @@ int Board::move(char color, string first, string second)
             if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
             {
                 std::cout << "\nTrying to capture that piece would render your king vulnerable to capture." << endl;
-                
+
                 return BAD;
             }
 
@@ -375,7 +374,7 @@ int Board::move(char color, string first, string second)
             }
 
             std::cout << "\n"
-                 << move_from->piece()->fullName() << " captured " << temp_name << endl;
+                      << move_from->piece()->fullName() << " captured " << temp_name << endl;
             move_to->remove_piece();
         }
     }
@@ -388,7 +387,7 @@ int Board::move(char color, string first, string second)
         if (move_from->piece()->name() == PAWN && move_from->piece()->location().second != move_to_loc.second)
         {
             std::cout << "\nA pawn can only capture another piece by moving forward diagonally one space." << endl;
-            
+
             return BAD;
         }
 
@@ -396,7 +395,7 @@ int Board::move(char color, string first, string second)
         if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
         {
             std::cout << "\nIllegal move, you are in check." << endl;
-            
+
             return BAD;
         }
     }
