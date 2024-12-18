@@ -5,7 +5,7 @@ Queen::Queen(char color, std::pair<int, int> location)
     : Piece(color, QUEEN, location) {}
 
 // Helper function to generate directional moves
-std::vector<std::pair<int, int>> generateDirectionalMoves(
+inline std::vector<std::pair<int, int>> generateDirectionalMoves(
     const std::pair<int, int>& start, int row_dir, int col_dir, std::pair<int, int> target = {-1, -1})
 {
     std::vector<std::pair<int, int>> path;
