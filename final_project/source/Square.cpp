@@ -1,29 +1,43 @@
 #include "Square.h"
 
-// Default constructor.
+// Default constructor: creates an empty square
 Square::Square() : _occupied(false), _piece(nullptr) {}
 
-// Copy constructor.
-Square::Square(const Square &s) : _occupied(s._occupied), _piece(s._piece) {}
+// Copy constructor: copies the square state
+Square::Square(const Square& s) : _occupied(s._occupied), _piece(s._piece) {}
 
-// Return occupied bool of square.
-bool Square::occupied() const { return _occupied; }
-
-// Return piece pointer occupying square.
-Piece *Square::piece() const { return _piece; }
-
-// Remove a piece from the square.
-void Square::remove_piece()
-{
-    _occupied = false;
-    _piece = nullptr;
+// Check if the square is occupied
+bool Square::occupied() const {
+    return _occupied;
 }
 
-// Sets the location of a piece to the location of this square on the board, renders it
-// occupied, and points to the piece.
-void Square::set_piece(Piece *piece, std::pair<int, int> location)
-{
-    _occupied = true;
-    _piece = piece;
-    _piece->set_location(location);  // Moves the piece to the square's location
+// Return pointer to the occupying piece
+Piece* Square::piece() const {
+    return _piece;
+}
+
+// Remove the piece from the square
+void Square::remove_piece() {
+    if (_occupied) { // Only reset if the square is occupied
+        _occupied = false;
+        _piece = nullptr;
+    }
+}
+
+// Place a piece on the square and update its location
+void Square::set_piece(Piece* piece, std::pair<int, int> location) {
+    if (_piece == piece) return; // Avoid redundant operations
+
+    if (piece != nullptr) { 
+        _occupied = true;
+        _piece = piece;
+        _piece->set_location(location); // Update the piece's location
+    } else {
+        remove_piece(); // If nullptr, reset the square
+    }
+}
+
+// Return a string representation of the square's state
+std::string Square::to_string() const {
+    return _occupied ? _piece->fullName() : ".";
 }

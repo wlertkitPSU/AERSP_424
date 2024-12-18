@@ -3,31 +3,30 @@
 
 #include "Piece.h"
 #include <utility>
+#include <string>
 
-// An individual square on the chess board
-// A square is either occupied or not occupied by a piece
+// Represents a square on the chessboard
 class Square
 {
 private:
-    // Attributes.
-    bool _occupied; // True if the square is occupied
-    Piece *_piece;  // Pointer to a piece occupying the square
+    bool _occupied;       // True if the square contains a piece
+    Piece* _piece;        // Pointer to the occupying piece
 
 public:
     // Constructors
-    Square();                  
-    Square(const Square &s);    
+    Square();                                    // Default constructor
+    Square(const Square& s);                     // Copy constructor
 
-    // Getters.
-    bool occupied() const;       // Return occupied bool of square
-    Piece *piece() const;        // Return piece pointer occupying square
+    // Accessors
+    bool occupied() const;                       // Check if the square is occupied
+    Piece* piece() const;                        // Get the occupying piece
 
-    // Remove a piece from the square
-    void remove_piece();
+    // Mutators
+    void remove_piece();                         // Remove the piece from the square
+    void set_piece(Piece* piece, std::pair<int, int> location); // Place a piece on the square
 
-    // Sets the location of a piece to the location of this square on the board, renders it
-    // occupied, and points to the piece
-    void set_piece(Piece *piece, std::pair<int, int> location);
+    // Utility
+    std::string to_string() const;               // Return square state as string for debugging
 };
 
 #endif
