@@ -6,66 +6,63 @@
 #include <iterator>
 using namespace std;
 
-Board::Board() : _rows(8), _cols(8), _squares(8, vector<Square>(8, Square()))
+// Constructor
+Board::Board() : _squares(_rows, vector<Square>(_cols)) 
 {
     init_pieces();
     init_board();
 }
 
+// Destructor
 Board::~Board()
 {
-    // Deletes white pieces
-    for (auto it = _white.begin(); it != _white.end(); ++it)
-    {
-        delete *it;
-    }
-
-    // Deletes black pieces
-    for (auto it = _black.begin(); it != _black.end(); ++it)
-    {
-        delete *it;
-    }
+    for (Piece *piece : _white) delete piece;
+    for (Piece *piece : _black) delete piece;
 }
 
-// Creating the correct number of pieces on the board
+// Initialize all pieces
 void Board::init_pieces()
 {
-    int i = 0;
+    int col = 0;
 
-    _white.push_back(new Rook(WHITE, {0, i}));
-    _white.push_back(new Knight(WHITE, {0, i}));
-    _white.push_back(new Bishop(WHITE, {0, i}));
-    _white.push_back(new Queen(WHITE, {0, i}));
-    _white.push_back(new King(WHITE, {0, i}));
-    _white.push_back(new Bishop(WHITE, {0, i}));
-    _white.push_back(new Knight(WHITE, {0, i}));
-    _white.push_back(new Rook(WHITE, {0, i}));
+    // Initial positions for major pieces
+    vector<pair<Piece *, Piece *>> major_pieces = {
+        {new Rook(WHITE, {0, col}), new Rook(BLACK, {7, col++})},
+        {new Knight(WHITE, {0, col}), new Knight(BLACK, {7, col++})},
+        {new Bishop(WHITE, {0, col}), new Bishop(BLACK, {7, col++})},
+        {new Queen(WHITE, {0, col}), new Queen(BLACK, {7, col++})},
+        {new King(WHITE, {0, col}), new King(BLACK, {7, col++})},
+        {new Bishop(WHITE, {0, col}), new Bishop(BLACK, {7, col++})},
+        {new Knight(WHITE, {0, col}), new Knight(BLACK, {7, col++})},
+        {new Rook(WHITE, {0, col}), new Rook(BLACK, {7, col++})}};
 
-    _black.push_back(new Rook(BLACK, {7, i++}));
-    _black.push_back(new Knight(BLACK, {7, i++}));
-    _black.push_back(new Bishop(BLACK, {7, i++}));
-    _black.push_back(new Queen(BLACK, {7, i++}));
-    _black.push_back(new King(BLACK, {7, i++}));
-    _black.push_back(new Bishop(BLACK, {7, i++}));
-    _black.push_back(new Knight(BLACK, {7, i++}));
-    _black.push_back(new Rook(BLACK, {7, i++}));
+    for (const auto &pair : major_pieces)
+    {
+        _white.push_back(pair.first);
+        _black.push_back(pair.second);
+    }
 
-    for (i = 0; i < _cols; i++)
+    // Pawns
+    for (int i = 0; i < _cols; ++i)
     {
         _white.push_back(new Pawn(WHITE, {1, i}));
         _black.push_back(new Pawn(BLACK, {6, i}));
     }
 }
 
-// Places pieces in correct initial positions
+// Place pieces on the board
 void Board::init_board()
 {
-    for (int c = 0; c < _cols; c++)
+    for (Piece *piece : _white)
     {
-        _squares[0][c].set_piece(_white[c], {0, c});
-        _squares[1][c].set_piece(_white[c + _cols], {1, c});
-        _squares[7][c].set_piece(_black[c], {7, c});
-        _squares[6][c].set_piece(_black[c + _cols], {6, c});
+        pair<int, int> loc = piece->location();
+        _squares[loc.first][loc.second].set_piece(piece, loc);
+    }
+
+    for (Piece *piece : _black)
+    {
+        pair<int, int> loc = piece->location();
+        _squares[loc.first][loc.second].set_piece(piece, loc);
     }
 }
 
@@ -282,7 +279,7 @@ int Board::move(char color, string first, string second)
     }
 
     // From now on assuming there is a piece on the square
-    pair<int, int> move_from_loc = {first[1] - 49, first[0] - 97};
+    // pair<int, int> move_from_loc = {first[1] - 49, first[0] - 97};
     pair<int, int> move_to_loc = {second[1] - 49, second[0] - 97};
     vector<pair<int, int>> move_to_list = move_from->piece()->moveCheck(move_to_loc);
 
@@ -340,7 +337,7 @@ int Board::move(char color, string first, string second)
         else
         {
             // This is an invalid move (vulnerable king)
-            if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
+            if (is_legal(move_from->piece(), move_to->piece(), move_to_loc))
             {
                 std::cout << "\nTrying to capture that piece would render your king vulnerable to capture." << endl;
 
@@ -356,7 +353,6 @@ int Board::move(char color, string first, string second)
             {
                 // Removing the piece from the list of pieces we have a destructor for so need
                 // to remove it from the vector and delete it
-                _white_captured.push_back(move_to->piece()->name());
                 auto to_remove = find(_white.begin(), _white.end(), move_to_piece);
                 delete *to_remove;
                 _white.erase(to_remove);
@@ -367,7 +363,6 @@ int Board::move(char color, string first, string second)
             {
                 // Removing the piece from the list of pieces we have a destructor for so need
                 // to remove it from the vector and delete it
-                _black_captured.push_back(move_to->piece()->name());
                 auto to_remove = find(_black.begin(), _black.end(), move_to_piece);
                 delete *to_remove;
                 _black.erase(to_remove);
@@ -392,7 +387,7 @@ int Board::move(char color, string first, string second)
         }
 
         // This is an invalid move (vulnerable king)
-        if (is_suicide(move_from->piece(), move_to->piece(), move_to_loc))
+        if (is_legal(move_from->piece(), move_to->piece(), move_to_loc))
         {
             std::cout << "\nIllegal move, you are in check." << endl;
 
@@ -408,7 +403,7 @@ int Board::move(char color, string first, string second)
 }
 
 // Checking to see if king is vulnerable
-bool Board::is_suicide(Piece *move_from_piece, Piece *move_to_piece, pair<int, int> move_to_loc)
+bool Board::is_legal(Piece *move_from_piece, Piece *move_to_piece, pair<int, int> move_to_loc)
 {
     // If piece being moved is white
     if (move_from_piece->color() == WHITE)
@@ -416,7 +411,7 @@ bool Board::is_suicide(Piece *move_from_piece, Piece *move_to_piece, pair<int, i
         // Iterates through every black piece on the board
         for (auto it = _black.begin(); it != _black.end(); ++it)
         {
-            // Will be NULL when is_suicide() is called and there is no piece on the square being moved to
+            // Will be NULL when is_legal() is called and there is no piece on the square being moved to
             if (move_to_piece)
             {
                 // Ensures that the piece being moved to isn't the one being captured
@@ -489,7 +484,7 @@ bool Board::is_suicide(Piece *move_from_piece, Piece *move_to_piece, pair<int, i
         // Iterate through every white piece on the board
         for (auto it = _white.begin(); it != _white.end(); ++it)
         {
-            // Will be NULL when is_suicide() is called and there is no piece on the square being moved to
+            // Will be NULL when is_legal() is called and there is no piece on the square being moved to
             if (move_to_piece)
             {
                 // Ensures that the piece being moved to isn't the one being captured
@@ -561,112 +556,61 @@ bool Board::is_suicide(Piece *move_from_piece, Piece *move_to_piece, pair<int, i
 // Checks for checkmate
 bool Board::is_checkmate(char color)
 {
-    // Piece potentially in checkmate is white
-    if (color == BLACK)
+    // Determine the player's pieces and king
+    const auto &player_pieces = (color == WHITE) ? _white : _black;
+
+    // Locate the player's king
+    Piece *king = nullptr;
+    for (Piece *piece : player_pieces)
     {
-        // Iterates through every white piece on the board
-        for (auto it = _white.begin(); it != _white.end(); ++it)
+        if (piece->name() == KING)
         {
-            vector<vector<pair<int, int>>> all_move_to_list = (*it)->allMoveCheck(); // List of the potential squares a piece can move to
+            king = piece;
+            break;
+        }
+    }
 
-            // Iterates through the coordinates of every potential square this piece can move to
-            for (auto ita = all_move_to_list.begin(); ita != all_move_to_list.end(); ++ita)
+    // If no king is found (shouldn't happen), return false
+    if (!king) return false;
+
+    // Check if the king is currently in check
+    bool king_in_check = is_legal(king, nullptr, king->location());
+    if (!king_in_check)
+        return false; // Not checkmate since king is not under threat
+
+    // Iterate through all the player's pieces to see if any legal move can resolve the check
+    for (Piece *piece : player_pieces)
+    {
+        vector<vector<pair<int, int>>> all_moves = piece->allMoveCheck();
+
+        for (const auto &path : all_moves)
+        {
+            for (const auto &move : path)
             {
-                for (auto itb = (*ita).begin(); itb != (*ita).end(); ++itb)
-                {
-                    pair<int, int> location = {(*itb).first, (*itb).second};      // Location of square being moved to
-                    Square *move_to = &_squares[location.first][location.second]; // Square being moved to
+                pair<int, int> original_loc = piece->location();
+                Square &start_square = _squares[original_loc.first][original_loc.second];
+                Square &target_square = _squares[move.first][move.second];
+                Piece *captured_piece = target_square.piece();
 
-                    // If piece hits a square with another piece in it
-                    if (move_to->occupied())
-                    {
-                        // If friendly piece can't move to that square or beyond it
-                        // Checks if piece is a pawn and attempting to capture an enemy piece in front of it
-                        if (move_to->piece()->color() == WHITE || ((*it)->name() == PAWN && (*it)->location().second == location.second))
-                        {
-                            break;
-                        }
+                // Simulate the move
+                target_square.set_piece(piece, move);
+                start_square.remove_piece();
 
-                        // If piece hits an enemy piece checks for checkmate based on new piece's location and the fact that particular
-                        // enemy piece will be captured
-                        if (!is_suicide(*it, move_to->piece(), location))
-                        {
-                            return false;
-                        }
-                    }
+                // Check if the move resolves the check
+                bool still_in_check = is_legal(king, nullptr, king->location());
 
-                    // If piece hits an empty square
-                    else
-                    {
-                        // If piece is a pawn and attempting to move diagonally without capturing an enemy piece
-                        if ((*it)->name() == PAWN && (*it)->location().second != location.second)
-                        {
-                            break;
-                        }
+                // Undo the move
+                start_square.set_piece(piece, original_loc);
+                target_square.set_piece(captured_piece, move);
 
-                        // Check for checkmate based on new piece's location
-                        if (!is_suicide(*it, NULL, location))
-                        {
-                            return false;
-                        }
-                    }
-                }
+                // If the king is no longer in check, it's not checkmate
+                if (!still_in_check)
+                    return false;
             }
         }
     }
 
-    // Piece potentially in checkmate is black
-    else
-    {
-        // Iterates through every black piece on the board
-        for (auto it = _black.begin(); it != _black.end(); ++it)
-        {
-            vector<vector<pair<int, int>>> all_move_to_list = (*it)->allMoveCheck(); // A list of the potential squares a piece can move to
-
-            // Iterates through the coordinates of every potential square this piece can move to
-            for (auto ita = all_move_to_list.begin(); ita != all_move_to_list.end(); ++ita)
-            {
-                for (auto itb = (*ita).begin(); itb != (*ita).end(); ++itb)
-                {
-                    pair<int, int> location = {(*itb).first, (*itb).second};      // Location of square being moved to
-                    Square *move_to = &_squares[location.first][location.second]; // Square being moved to
-
-                    // If piece hits a square with another piece in it
-                    if (move_to->occupied())
-                    {
-                        // If friendly piece it can't move to that square or beyond it
-                        // Checks if piece is a pawn and attempting to capture an enemy piece in front of it
-                        if (move_to->piece()->color() == BLACK || ((*it)->name() == PAWN && (*it)->location().second == location.second))
-                        {
-                            break;
-                        }
-
-                        // If piece hits an enemy piece checks for checkmate based on new piece's location and the fact that particular
-                        // enemy piece will be captured
-                        if (!is_suicide(*it, move_to->piece(), location))
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        // If piece is a pawn and attempting to move diagonally without capturing an enemy piece
-                        if ((*it)->name() == PAWN && (*it)->location().second != location.second)
-                        {
-                            break;
-                        }
-
-                        // Checks for checkmate based on new piece's location
-                        if (!is_suicide(*it, NULL, location))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    // No valid move resolved the check -> it's checkmate
     return true;
 }
 

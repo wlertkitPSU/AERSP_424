@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 using namespace std;
 
 // Constants to represent color names.
@@ -17,46 +18,44 @@ const char BISHOP = 'B';
 const char KNIGHT = 'N';
 const char PAWN = 'P';
 
-// Constants to represent potential movement outcomes.
-const int BAD = -1;
-const int GOOD = 0;
-const int CHECK = 1;
-const int CHECKMATE = 2;
-const int STALEMATE = 3;
+// Movement outcomes
+enum MoveOutcome { BAD = -1, GOOD, CHECK, CHECKMATE, STALEMATE };
 
-// Functions.
+// Helper function to check bounds
 bool checkBounds(pair<int, int> location);
 
 class Piece
 {
-private:
-    // Attributes
-    char _color;              // The color of the piece. Can be 'W' or 'B'.
-    char _name;               // The name of the piece. Can be 'K', 'Q', 'R', 'B', 'N', or 'P'
-    pair<int, int> _location; // Current location of the piece on the chess board. Bottom left is {0,0}, top right is {7,7}.
+protected:
+    char _color;              // 'W' for White, 'B' for Black
+    char _name;               // 'K', 'Q', 'R', etc.
+    pair<int, int> _location; // {row, column} of the piece
 
 public:
-    // Constructors.
-    Piece();                                                                                   // Default constructor.
-    Piece(char color, char name, pair<int, int> location);                                     // Constructor for a specific piece.
+    // Constructors
+    Piece();                                   
+    Piece(char color, char name, pair<int, int> location);  
 
-    // Destructor
-    virtual ~Piece() {}
+    virtual ~Piece() {} // Virtual destructor for base class safety
 
     // Getters
-    char color() const;                                                                       // Return the color char of the piece.
-    char name() const;                                                                        // Return the name char of the piece.
-    string fullName() const;                                                                  // Return the color+name of the piece, giving it a unique name for that player's side.
-    pair<int, int> location() const;                                                          // Return the location pair of ints of the piece.
+    char color() const;                       
+    char name() const;                        
+    string fullName() const;                  
+    pair<int, int> location() const;          
 
     // Setters
-    void move(pair<int, int> location);                                                       // Sets the location of the piece to the argument's value.
+    void set_location(const pair<int, int>& new_location); 
 
-    virtual vector<pair<int, int>> moveCheck(pair<int, int> move_to) = 0;                     // Pure virtual function for returning the moves of a piece in a single direction.
-    virtual vector<vector<pair<int, int>>> allMoveCheck() = 0;                                // Pure virtual function for returning all the moves of a piece.
+    // Display Information
+    void print_info() const; // Utility to print piece details
+
+    // Movement (to be implemented in derived classes)
+    virtual vector<pair<int, int>> moveCheck(pair<int, int> move_to) = 0;
+    virtual vector<vector<pair<int, int>>> allMoveCheck() = 0;
 };
 
-// Operator overload for comparing two pieces.
+// Operator overload for comparison
 inline bool operator==(const Piece *lhs, const Piece &rhs)
 {
     return lhs->fullName() == rhs.fullName() && lhs->location() == rhs.location();

@@ -25,5 +25,5 @@ void Square::set_piece(Piece *piece, std::pair<int, int> location)
 {
     _occupied = true;
     _piece = piece;
-    _piece->move(location);  // Moves the piece to the square's location
+    _piece->set_location(location);  // Moves the piece to the square's location
 }
