@@ -1,117 +1,60 @@
 #include "Rook.h"
 
-// Constructor.
-Rook::Rook(char color, std::pair<int, int> location) : Piece(color, ROOK, location) {}
+// Constructor: Initializes the Rook with color and location
+Rook::Rook(char color, std::pair<int, int> location)
+    : Piece(color, ROOK, location) {}
 
-// Returns all squares between the rook's current square and the square being moved to.
-std::vector<std::pair<int, int>> Rook::moveCheck(std::pair<int, int> move_to)
-{
-    std::pair<int, int> to_add;
-    std::vector<std::pair<int, int>> move_to_list;
+// Helper function to generate moves in a single direction
+inline std::vector<std::pair<int, int>> generateDirectionalMoves(
+    const std::pair<int, int>& start, int row_dir, int col_dir, std::pair<int, int> target = {-1, -1}) {
+    std::vector<std::pair<int, int>> path;
+    auto current = start;
 
-    // Move up many spaces.
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first + 1, to_add.second};
-        move_to_list.push_back(to_add);
+    // Move in the specified direction until out of bounds or reaching the target
+    while (true) {
+        current = {current.first + row_dir, current.second + col_dir};
 
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
+        if (!checkBounds(current)) break; // Stop if out of bounds
+        path.push_back(current);
+
+        if (current == target) return path; // Stop when the target is reached
     }
 
-    // Move right many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first, to_add.second + 1};
-        move_to_list.push_back(to_add);
-
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    // Move down many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first - 1, to_add.second};
-        move_to_list.push_back(to_add);
-
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    // Move left many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first, to_add.second - 1};
-        move_to_list.push_back(to_add);
-
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    return move_to_list;
+    // If target is not reached, clear the path (for moveCheck)
+    if (target != std::make_pair(-1, -1)) path.clear();
+    return path;
 }
 
-// Returns all possible squares the rook can move to.
-std::vector<std::vector<std::pair<int, int>>> Rook::allMoveCheck()
-{
-    std::pair<int, int> to_add;
-    std::vector<std::vector<std::pair<int, int>>> move_to_list;
+// Returns all squares between the rook's current square and the target square
+std::vector<std::pair<int, int>> Rook::moveCheck(std::pair<int, int> move_to) {
+    // Directions the rook can move: vertical and horizontal
+    const std::vector<std::pair<int, int>> directions = {
+        {1, 0}, {0, 1}, {-1, 0}, {0, -1}
+    };
 
-    // Move up many spaces.
-    std::vector<std::pair<int, int>> up;
-    to_add = {location().first + 1, location().second};
-    while (checkBounds(to_add))
-    {
-        up.push_back(to_add);
-        to_add = {to_add.first + 1, to_add.second};
+    // Generate moves in each direction and check for the target
+    for (const auto& dir : directions) {
+        auto path = generateDirectionalMoves(location(), dir.first, dir.second, move_to);
+        if (!path.empty()) return path; // Return the path if the move is valid
     }
-    move_to_list.push_back(up);
 
-    // Move right many spaces.
-    std::vector<std::pair<int, int>> right;
-    to_add = {location().first, location().second + 1};
-    while (checkBounds(to_add))
-    {
-        right.push_back(to_add);
-        to_add = {to_add.first, to_add.second + 1};
+    return {}; // Return empty vector if no valid path
+}
+
+// Returns all possible moves for the rook
+std::vector<std::vector<std::pair<int, int>>> Rook::allMoveCheck() {
+    std::vector<std::vector<std::pair<int, int>>> all_moves;
+
+    // Directions the rook can move: vertical and horizontal
+    const std::vector<std::pair<int, int>> directions = {
+        {1, 0}, {0, 1}, {-1, 0}, {0, -1}
+    };
+
+    // Generate moves in all directions
+    for (const auto& dir : directions) {
+        auto path = generateDirectionalMoves(location(), dir.first, dir.second);
+        if (!path.empty()) all_moves.push_back(path);
     }
-    move_to_list.push_back(right);
 
-    // Move down many spaces.
-    std::vector<std::pair<int, int>> down;
-    to_add = {location().first - 1, location().second};
-    while (checkBounds(to_add))
-    {
-        down.push_back(to_add);
-        to_add = {to_add.first - 1, to_add.second};
-    }
-    move_to_list.push_back(down);
-
-    // Move left many spaces.
-    std::vector<std::pair<int, int>> left;
-    to_add = {location().first, location().second - 1};
-    while (checkBounds(to_add))
-    {
-        left.push_back(to_add);
-        to_add = {to_add.first, to_add.second - 1};
-    }
-    move_to_list.push_back(left);
-
-    return move_to_list;
+    return all_moves;
 }
