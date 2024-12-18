@@ -8,14 +8,14 @@
 class Knight : public Piece
 {
 public:
-    // Constructor.
+    // Constructor
     Knight(char color, std::pair<int, int> location);
 
-    // Returns all squares between the knight's current square and the square being moved to.
-    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to);
+    // Checks if moving to `move_to` is valid and returns the path
+    std::vector<std::pair<int, int>> moveCheck(std::pair<int, int> move_to) override;
 
-    // Returns all possible squares the knight can move to.
-    std::vector<std::vector<std::pair<int, int>>> allMoveCheck();
+    // Returns all possible moves for the Knight
+    std::vector<std::vector<std::pair<int, int>>> allMoveCheck() override;
 };
 
 #endif
