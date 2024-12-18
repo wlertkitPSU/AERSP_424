@@ -22,12 +22,6 @@ private:
     void init_pieces();                        // Initialize pieces
     void init_board();                         // Place pieces on the board
 
-    bool is_valid_coords(const string &coord);
-    bool can_capture(Square *target_square, char piece_color);
-    void remove_captured_piece(Square *target_square);
-    bool is_valid_pawn_move(Piece *piece, pair<int, int> target_loc, Square *target_square);
-    bool is_king_threatened(char king_color);
-
 public:
     Board();
     ~Board();
@@ -45,5 +39,4 @@ public:
 };
 
 bool checkMoveCoords(char file, char rank);    // Helper for bounds check
-
 #endif
