@@ -1,156 +1,55 @@
 #include "King.h"
 
+// Constructor: Initializes the King with color and location
 King::King(char color, std::pair<int, int> location)
     : Piece(color, KING, location) {}
 
-std::vector<std::pair<int, int>> King::moveCheck(std::pair<int, int> move_to)
-{
-    std::pair<int, int> to_add;
-    std::vector<std::pair<int, int>> move_to_list;
+// Returns the squares between the king's current square and the target square
+std::vector<std::pair<int, int>> King::moveCheck(std::pair<int, int> move_to) {
+    // List of all potential moves for the king (one square in any direction)
+    std::vector<std::pair<int, int>> potential_moves = {
+        {location().first + 1, location().second},       // Up
+        {location().first + 1, location().second + 1},  // Up-Right
+        {location().first, location().second + 1},      // Right
+        {location().first - 1, location().second + 1},  // Down-Right
+        {location().first - 1, location().second},      // Down
+        {location().first - 1, location().second - 1},  // Down-Left
+        {location().first, location().second - 1},      // Left
+        {location().first + 1, location().second - 1}   // Up-Left
+    };
 
-    // Move up one space.
-    to_add = {location().first + 1, location().second};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
+    // Check if the target square is a valid move
+    for (const auto& move : potential_moves) {
+        if (move == move_to && checkBounds(move)) {
+            return {move};
+        }
     }
 
-    // Move diagonally top right one space.
-    to_add = {location().first + 1, location().second + 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move right one space.
-    to_add = {location().first, location().second + 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move diagonally bottom right one space.
-    to_add = {location().first - 1, location().second + 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move down one space.
-    to_add = {location().first - 1, location().second};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move diagonally bottom left one space.
-    to_add = {location().first - 1, location().second - 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move left one space.
-    to_add = {location().first, location().second - 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    // Move diagonally top left one space.
-    to_add = {location().first + 1, location().second - 1};
-    if (to_add == move_to)
-    {
-        move_to_list.push_back(to_add);
-        return move_to_list;
-    }
-
-    return move_to_list;
+    // If the move is invalid, return an empty vector
+    return {};
 }
 
-std::vector<std::vector<std::pair<int, int>>> King::allMoveCheck()
-{
-    std::pair<int, int> to_add;
-    std::vector<std::vector<std::pair<int, int>>> move_to_list;
+// Returns all valid moves for the King
+std::vector<std::vector<std::pair<int, int>>> King::allMoveCheck() {
+    // List of all potential moves for the king
+    std::vector<std::pair<int, int>> potential_moves = {
+        {location().first + 1, location().second},       // Up
+        {location().first + 1, location().second + 1},  // Up-Right
+        {location().first, location().second + 1},      // Right
+        {location().first - 1, location().second + 1},  // Down-Right
+        {location().first - 1, location().second},      // Down
+        {location().first - 1, location().second - 1},  // Down-Left
+        {location().first, location().second - 1},      // Left
+        {location().first + 1, location().second - 1}   // Up-Left
+    };
 
-    // Move up one space.
-    to_add = {location().first + 1, location().second};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> up;
-        up.push_back(to_add);
-        move_to_list.push_back(up);
+    // Filter moves to ensure they are within bounds
+    std::vector<std::vector<std::pair<int, int>>> valid_moves;
+    for (const auto& move : potential_moves) {
+        if (checkBounds(move)) {
+            valid_moves.push_back({move});
+        }
     }
 
-    // Move diagonally top right one space.
-    to_add = {location().first + 1, location().second + 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> diag_top_right;
-        diag_top_right.push_back(to_add);
-        move_to_list.push_back(diag_top_right);
-    }
-
-    // Move right one space.
-    to_add = {location().first, location().second + 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> right;
-        right.push_back(to_add);
-        move_to_list.push_back(right);
-    }
-
-    // Move diagonally bottom right one space.
-    to_add = {location().first - 1, location().second + 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> diag_bottom_right;
-        diag_bottom_right.push_back(to_add);
-        move_to_list.push_back(diag_bottom_right);
-    }
-
-    // Move down one space.
-    to_add = {location().first - 1, location().second};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> down;
-        down.push_back(to_add);
-        move_to_list.push_back(down);
-    }
-
-    // Move diagonally bottom left one space.
-    to_add = {location().first - 1, location().second - 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> diag_bottom_left;
-        diag_bottom_left.push_back(to_add);
-        move_to_list.push_back(diag_bottom_left);
-    }
-
-    // Move left one space.
-    to_add = {location().first, location().second - 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> left;
-        left.push_back(to_add);
-        move_to_list.push_back(left);
-    }
-
-    // Move diagonally top left one space.
-    to_add = {location().first + 1, location().second - 1};
-    if (checkBounds(to_add))
-    {
-        std::vector<std::pair<int, int>> diag_top_left;
-        diag_top_left.push_back(to_add);
-        move_to_list.push_back(diag_top_left);
-    }
-
-    return move_to_list;
+    return valid_moves;
 }
