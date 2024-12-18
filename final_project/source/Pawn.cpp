@@ -1,182 +1,64 @@
 #include "Pawn.h"
 
 // Constructor
-Pawn::Pawn(char color, std::pair<int, int> location) : Piece(color, PAWN, location) {}
+Pawn::Pawn(char color, std::pair<int, int> location)
+    : Piece(color, PAWN, location) {}
 
-// Returns all squares between the pawn's current square and the square being moved to.
-std::vector<std::pair<int, int>> Pawn::moveCheck(std::pair<int, int> move_to)
-{
-    std::pair<int, int> to_add;
-    std::vector<std::pair<int, int>> move_to_list;
+// Helper function to generate potential pawn moves
+inline std::vector<std::pair<int, int>> generatePawnMoves(const std::pair<int, int>& location, char color, bool initialMove) {
+    std::vector<std::pair<int, int>> moves;
+    int direction = (color == WHITE) ? 1 : -1;
 
-    // Piece is white
-    if (color() == WHITE)
-    {
-        // Move up one space.
-        to_add = {location().first + 1, location().second};
-        move_to_list.push_back(to_add);
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
+    // Move forward one space
+    moves.push_back({location.first + direction, location.second});
 
-        // Move up two spaces if at initial location.
-        if (location().first == 1)
-        {
-            to_add = {location().first + 2, location().second};
-            if (to_add == move_to)
-            {
-                move_to_list.push_back(to_add);
-                return move_to_list;
-            }
-        }
-
-        move_to_list.clear();
-
-        // Move diagonally top right if capturing a piece.
-        to_add = {location().first + 1, location().second + 1};
-        if (to_add == move_to)
-        {
-            move_to_list.push_back(to_add);
-            return move_to_list;
-        }
-
-        // Move diagonally top left if capturing a piece.
-        to_add = {location().first + 1, location().second - 1};
-        if (to_add == move_to)
-        {
-            move_to_list.push_back(to_add);
-            return move_to_list;
-        }
+    // Move forward two spaces if on the initial row
+    if (initialMove) {
+        moves.push_back({location.first + 2 * direction, location.second});
     }
 
-    // Piece is black
-    else
-    {
-        // Move down one space.
-        to_add = {location().first - 1, location().second};
-        move_to_list.push_back(to_add);
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
+    // Diagonal captures
+    moves.push_back({location.first + direction, location.second + 1});
+    moves.push_back({location.first + direction, location.second - 1});
 
-        // Move down two spaces if at initial location.
-        if (location().first == 6)
-        {
-            to_add = {location().first - 2, location().second};
-            if (to_add == move_to)
-            {
-                move_to_list.push_back(to_add);
-                return move_to_list;
-            }
-        }
-
-        move_to_list.clear();
-
-        // Move diagonally bottom right if capturing a piece.
-        to_add = {location().first - 1, location().second + 1};
-        if (to_add == move_to)
-        {
-            move_to_list.push_back(to_add);
-            return move_to_list;
-        }
-
-        // Move diagonally bottom left if capturing a piece.
-        to_add = {location().first - 1, location().second - 1};
-        if (to_add == move_to)
-        {
-            move_to_list.push_back(to_add);
-            return move_to_list;
-        }
-    }
-
-    return move_to_list;
+    return moves;
 }
 
-// Returns all possible squares the pawn can move to.
-std::vector<std::vector<std::pair<int, int>>> Pawn::allMoveCheck()
-{
-    std::pair<int, int> to_add;
-    std::vector<std::vector<std::pair<int, int>>> move_to_list;
+// Checks if moving to `move_to` is valid and returns the path
+std::vector<std::pair<int, int>> Pawn::moveCheck(std::pair<int, int> move_to) {
+    // Determine if the pawn is in its initial position
+    bool initialMove = (color() == WHITE && location().first == 1) || 
+                       (color() == BLACK && location().first == 6);
 
-    // Piece is white.
-    if (color() == WHITE)
-    {
-        // Move up one space.
-        to_add = {location().first + 1, location().second};
-        std::vector<std::pair<int, int>> up;
-        if (checkBounds(to_add))
-        {
-            up.push_back(to_add);
-        }
+    // Get all potential moves for this pawn
+    auto potential_moves = generatePawnMoves(location(), color(), initialMove);
 
-        // Move up two spaces if at initial location.
-        if (location().first == 1)
-        {
-            to_add = {location().first + 2, location().second};
-            up.push_back(to_add);
-        }
-
-        move_to_list.push_back(up);
-
-        // Move diagonally top right if capturing a piece.
-        to_add = {location().first + 1, location().second + 1};
-        if (checkBounds(to_add))
-        {
-            std::vector<std::pair<int, int>> diag_top_right;
-            diag_top_right.push_back(to_add);
-            move_to_list.push_back(diag_top_right);
-        }
-
-        // Move diagonally top left if capturing a piece.
-        to_add = {location().first + 1, location().second - 1};
-        if (checkBounds(to_add))
-        {
-            std::vector<std::pair<int, int>> diag_top_left;
-            diag_top_left.push_back(to_add);
-            move_to_list.push_back(diag_top_left);
+    // Validate the target move
+    for (const auto& move : potential_moves) {
+        if (move == move_to && checkBounds(move)) {
+            return {move};
         }
     }
 
-    // Piece is black.
-    else
-    {
-        // Move down one space.
-        to_add = {location().first - 1, location().second};
-        std::vector<std::pair<int, int>> down;
-        if (checkBounds(to_add))
-        {
-            down.push_back(to_add);
-        }
+    return {}; // Return an empty vector if the move is invalid
+}
 
-        // Move down two spaces if at initial location.
-        if (location().first == 6)
-        {
-            to_add = {location().first - 2, location().second};
-            down.push_back(to_add);
-        }
+// Returns all possible moves for the pawn
+std::vector<std::vector<std::pair<int, int>>> Pawn::allMoveCheck() {
+    // Determine if the pawn is in its initial position
+    bool initialMove = (color() == WHITE && location().first == 1) || 
+                       (color() == BLACK && location().first == 6);
 
-        move_to_list.push_back(down);
+    // Get all potential moves for this pawn
+    auto potential_moves = generatePawnMoves(location(), color(), initialMove);
 
-        // Move diagonally bottom right if capturing a piece.
-        to_add = {location().first - 1, location().second + 1};
-        if (checkBounds(to_add))
-        {
-            std::vector<std::pair<int, int>> diag_bottom_right;
-            diag_bottom_right.push_back(to_add);
-            move_to_list.push_back(diag_bottom_right);
-        }
-
-        // Move diagonally bottom left if capturing a piece.
-        to_add = {location().first - 1, location().second - 1};
-        if (checkBounds(to_add))
-        {
-            std::vector<std::pair<int, int>> diag_bottom_left;
-            diag_bottom_left.push_back(to_add);
-            move_to_list.push_back(diag_bottom_left);
+    // Filter valid moves
+    std::vector<std::vector<std::pair<int, int>>> valid_moves;
+    for (const auto& move : potential_moves) {
+        if (checkBounds(move)) {
+            valid_moves.push_back({move});
         }
     }
 
-    return move_to_list;
+    return valid_moves;
 }
