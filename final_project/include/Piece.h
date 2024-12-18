@@ -4,13 +4,15 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <utility>
+
 using namespace std;
 
-// Constants to represent color names.
+// Constants for piece colors
 const char WHITE = 'W';
 const char BLACK = 'B';
 
-// Constants to represent piece names.
+// Constants for piece names
 const char KING = 'K';
 const char QUEEN = 'Q';
 const char ROOK = 'R';
@@ -24,33 +26,33 @@ enum MoveOutcome { BAD = -1, GOOD, CHECK, CHECKMATE, STALEMATE };
 // Helper function to check bounds
 bool checkBounds(pair<int, int> location);
 
-class Piece
-{
+// Base class for all chess pieces
+class Piece {
 protected:
     char _color;              // 'W' for White, 'B' for Black
-    char _name;               // 'K', 'Q', 'R', etc.
-    pair<int, int> _location; // {row, column} of the piece
+    char _name;               // Name/type of the piece (KING, QUEEN, etc.)
+    pair<int, int> _location; // {row, column} on the board
 
 public:
     // Constructors
-    Piece();                                   
-    Piece(char color, char name, pair<int, int> location);  
+    Piece(); // Default constructor
+    Piece(char color, char name, pair<int, int> location);
 
-    virtual ~Piece() {} // Virtual destructor for base class safety
+    virtual ~Piece() = default; // Virtual destructor for safe polymorphism
 
-    // Getters
-    char color() const;                       
-    char name() const;                        
-    string fullName() const;                  
-    pair<int, int> location() const;          
+    // Accessors
+    char color() const;                        // Returns the piece color
+    char name() const;                         // Returns the piece type/name
+    string fullName() const;                   // Returns full identifier (color + name)
+    pair<int, int> location() const;           // Returns the piece's current location
 
-    // Setters
-    void set_location(const pair<int, int>& new_location); 
+    // Mutators
+    void set_location(const pair<int, int>& new_location); // Sets the piece's location
 
-    // Display Information
-    void print_info() const; // Utility to print piece details
+    // Debugging
+    void print_info() const; // Prints the piece's details for debugging
 
-    // Movement (to be implemented in derived classes)
+    // Pure virtual methods for movement logic
     virtual vector<pair<int, int>> moveCheck(pair<int, int> move_to) = 0;
     virtual vector<vector<pair<int, int>>> allMoveCheck() = 0;
 };
