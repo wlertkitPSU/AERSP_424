@@ -1,118 +1,68 @@
 #include "Bishop.h"
 
-// Constructor
-Bishop::Bishop(char color, std::pair<int, int> location) : Piece(color, BISHOP, location) {}
+// Constructor: Initializes the bishop with color and location
+Bishop::Bishop(char color, std::pair<int, int> location)
+    : Piece(color, BISHOP, location) {}
 
-// Returns all squares between the bishop's current square and the square being moved to.
-std::vector<std::pair<int, int>> Bishop::moveCheck(std::pair<int, int> move_to)
+// Helper function to generate moves in a diagonal direction
+inline std::vector<std::pair<int, int>> generateDiagonalMoves(
+    std::pair<int, int> start, int row_dir, int col_dir, std::pair<int, int> target = {-1, -1})
 {
-    std::pair<int, int> to_add;
-    std::vector<std::pair<int, int>> move_to_list;
+    std::vector<std::pair<int, int>> path;
+    auto current = start;
 
-    // Move diagonally top right many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
+    while (true)
     {
-        to_add = {to_add.first + 1, to_add.second + 1};
-        move_to_list.push_back(to_add);
+        current = {current.first + row_dir, current.second + col_dir};
 
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
+        if (!checkBounds(current))
+            break; // Stop if out of bounds
+        path.push_back(current);
+
+        if (current == target)
+            return path; // Return path if target is reached
     }
 
-    // Move diagonally bottom right many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first - 1, to_add.second + 1};
-        move_to_list.push_back(to_add);
+    if (target != std::make_pair(-1, -1))
+        path.clear(); // Clear path if target not reached
 
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    // Move diagonally bottom left many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first - 1, to_add.second - 1};
-        move_to_list.push_back(to_add);
-
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    // Move diagonally top left many spaces.
-    move_to_list.clear();
-    to_add = {location().first, location().second};
-    while (checkBounds(to_add))
-    {
-        to_add = {to_add.first + 1, to_add.second - 1};
-        move_to_list.push_back(to_add);
-
-        if (to_add == move_to)
-        {
-            return move_to_list;
-        }
-    }
-
-    return move_to_list;
+    return path;
 }
 
-// Returns all possible squares the bishop can move to.
+// Returns all squares between the bishop's current square and the target square
+std::vector<std::pair<int, int>> Bishop::moveCheck(std::pair<int, int> move_to)
+{
+    // Directions: diagonally (top-right, bottom-right, bottom-left, top-left)
+    const std::vector<std::pair<int, int>> directions = {
+        {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+
+    // Check each direction for a valid path to the target square
+    for (const auto &dir : directions)
+    {
+        auto path = generateDiagonalMoves(location(), dir.first, dir.second, move_to);
+        if (!path.empty())
+            return path; // Return the path if valid
+    }
+
+    return {}; // Return an empty vector if no valid move
+}
+
+// Returns all possible squares the bishop can move to
 std::vector<std::vector<std::pair<int, int>>> Bishop::allMoveCheck()
 {
-    std::pair<int, int> to_add;
-    std::vector<std::vector<std::pair<int, int>>> move_to_list;
+    std::vector<std::vector<std::pair<int, int>>> all_moves;
 
-    // Move diagonally top right many spaces.
-    std::vector<std::pair<int, int>> diag_top_right;
-    to_add = {location().first + 1, location().second + 1};
-    while (checkBounds(to_add))
+    // Directions: diagonally (top-right, bottom-right, bottom-left, top-left)
+    const std::vector<std::pair<int, int>> directions = {
+        {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
+
+    // Generate all possible moves in each direction
+    for (const auto &dir : directions)
     {
-        diag_top_right.push_back(to_add);
-        to_add = {to_add.first + 1, to_add.second + 1};
+        auto path = generateDiagonalMoves(location(), dir.first, dir.second);
+        if (!path.empty())
+            all_moves.push_back(path);
     }
-    move_to_list.push_back(diag_top_right);
 
-    // Move diagonally bottom right many spaces.
-    std::vector<std::pair<int, int>> diag_bottom_right;
-    to_add = {location().first - 1, location().second + 1};
-    while (checkBounds(to_add))
-    {
-        diag_bottom_right.push_back(to_add);
-        to_add = {to_add.first - 1, to_add.second + 1};
-    }
-    move_to_list.push_back(diag_bottom_right);
-
-    // Move diagonally bottom left many spaces.
-    std::vector<std::pair<int, int>> diag_bottom_left;
-    to_add = {location().first - 1, location().second - 1};
-    while (checkBounds(to_add))
-    {
-        diag_bottom_left.push_back(to_add);
-        to_add = {to_add.first - 1, to_add.second - 1};
-    }
-    move_to_list.push_back(diag_bottom_left);
-
-    // Move diagonally top left many spaces.
-    std::vector<std::pair<int, int>> diag_top_left;
-    to_add = {location().first + 1, location().second - 1};
-    while (checkBounds(to_add))
-    {
-        diag_top_left.push_back(to_add);
-        to_add = {to_add.first + 1, to_add.second - 1};
-    }
-    move_to_list.push_back(diag_top_left);
-
-    return move_to_list;
+    return all_moves;
 }
