@@ -6,142 +6,139 @@
 #include <iterator>
 using namespace std;
 
-Board::Board() : _rows(8), _cols(8), _squares(8, vector<Square>(8, Square()))
+// Constructor
+Board::Board() : _squares(_rows, vector<Square>(_cols)) 
 {
     init_pieces();
     init_board();
 }
 
+// Destructor
 Board::~Board()
 {
-    // Deletes white pieces
-    for (auto it = _white.begin(); it != _white.end(); ++it)
-    {
-        delete *it;
-    }
-
-    // Deletes black pieces
-    for (auto it = _black.begin(); it != _black.end(); ++it)
-    {
-        delete *it;
-    }
+    for (Piece *white_piece : _white) delete white_piece;
+    for (Piece *black_piece : _black) delete black_piece;
 }
 
-// Creating the correct number of pieces on the board
+// Initialize all pieces
 void Board::init_pieces()
 {
-    int i = 0;
+    int current_col = 0;
 
-    _white.push_back(new Rook(WHITE, {0, i}));
-    _white.push_back(new Knight(WHITE, {0, i}));
-    _white.push_back(new Bishop(WHITE, {0, i}));
-    _white.push_back(new Queen(WHITE, {0, i}));
-    _white.push_back(new King(WHITE, {0, i}));
-    _white.push_back(new Bishop(WHITE, {0, i}));
-    _white.push_back(new Knight(WHITE, {0, i}));
-    _white.push_back(new Rook(WHITE, {0, i}));
+    // Initial positions for major pieces
+    vector<pair<Piece *, Piece *>> major_pieces = {
+        {new Rook(WHITE, {0, current_col}), new Rook(BLACK, {7, current_col++})},
+        {new Knight(WHITE, {0, current_col}), new Knight(BLACK, {7, current_col++})},
+        {new Bishop(WHITE, {0, current_col}), new Bishop(BLACK, {7, current_col++})},
+        {new Queen(WHITE, {0, current_col}), new Queen(BLACK, {7, current_col++})},
+        {new King(WHITE, {0, current_col}), new King(BLACK, {7, current_col++})},
+        {new Bishop(WHITE, {0, current_col}), new Bishop(BLACK, {7, current_col++})},
+        {new Knight(WHITE, {0, current_col}), new Knight(BLACK, {7, current_col++})},
+        {new Rook(WHITE, {0, current_col}), new Rook(BLACK, {7, current_col++})}};
 
-    _black.push_back(new Rook(BLACK, {7, i++}));
-    _black.push_back(new Knight(BLACK, {7, i++}));
-    _black.push_back(new Bishop(BLACK, {7, i++}));
-    _black.push_back(new Queen(BLACK, {7, i++}));
-    _black.push_back(new King(BLACK, {7, i++}));
-    _black.push_back(new Bishop(BLACK, {7, i++}));
-    _black.push_back(new Knight(BLACK, {7, i++}));
-    _black.push_back(new Rook(BLACK, {7, i++}));
+    for (const auto &piece_pair : major_pieces)
+    {
+        _white.push_back(piece_pair.first);
+        _black.push_back(piece_pair.second);
+    }
 
-    for (i = 0; i < _cols; i++)
+    // Pawns
+    for (int i = 0; i < _cols; ++i)
     {
         _white.push_back(new Pawn(WHITE, {1, i}));
         _black.push_back(new Pawn(BLACK, {6, i}));
     }
 }
 
-// Places pieces in correct initial positions
+// Place pieces on the board
 void Board::init_board()
 {
-    for (int c = 0; c < _cols; c++)
+    for (Piece *white_piece : _white)
     {
-        _squares[0][c].set_piece(_white[c], {0, c});
-        _squares[1][c].set_piece(_white[c + _cols], {1, c});
-        _squares[7][c].set_piece(_black[c], {7, c});
-        _squares[6][c].set_piece(_black[c + _cols], {6, c});
+        pair<int, int> position = white_piece->location();
+        _squares[position.first][position.second].set_piece(white_piece, position);
+    }
+
+    for (Piece *black_piece : _black)
+    {
+        pair<int, int> position = black_piece->location();
+        _squares[position.first][position.second].set_piece(black_piece, position);
     }
 }
 
 // Prints out the current board
-void Board::print_board(ostream &out) const
+void Board::print_board(ostream &output_stream) const
 {
     // Prints the top border
-    out << "  _______________________________________________________" << endl;
+    output_stream << "  _______________________________________________________" << endl;
 
     // Prints everything but the bottom letter coordinates
-    for (int r = _rows - 1; r >= 0; r--)
+    for (int row = _rows - 1; row >= 0; row--)
     {
         // Prints the upper empty space of the squares and the number coordinate associated with that row
-        out << " |      |      |      |      |      |      |      |      |\n"
-            << r + 1 << "|";
+        output_stream << " |      |      |      |      |      |      |      |      |\n"
+                      << row + 1 << "|";
 
         // Prints the names of the pieces in the squares of this row
-        for (int c = 0; c < _cols; c++)
+        for (int col = 0; col < _cols; col++)
         {
-            out << " ";
+            output_stream << " ";
 
             // If this square contains a piece --> print its color and name
-            if (_squares[r][c].occupied())
+            if (_squares[row][col].occupied())
             {
-                out << " " << _squares[r][c].piece()->fullName();
+                output_stream << " " << _squares[row][col].piece()->fullName();
             }
 
             // If this square doesn't contain a piece --> print two blank spaces
             else
             {
-                out << "   ";
+                output_stream << "   ";
             }
 
-            out << "  |";
+            output_stream << "  |";
         }
 
         // Prints the bottom portion of each square
-        out << "\n"
-            << " |______|______|______|______|______|______|______|______|" << endl;
+        output_stream << "\n"
+                      << " |______|______|______|______|______|______|______|______|" << endl;
     }
 
     // Prints the bottom letter coordinates
-    out << "    a      b      c      d      e      f      g      h" << endl;
+    output_stream << "    a      b      c      d      e      f      g      h" << endl;
 }
 
 // Playing a game between two people
 void Board::play_user()
 {
-    string command;              // Entire line inputted by user as a command. Parsed for max of two potential separate strings later.
-    string turn_color = "White"; // Color whose turn it currently is
-    string off_color = "Black";  // Color whose turn is next
-    bool draw_agree = false;     // True if one player attempts to declare a draw
+    string user_command;              // Entire line inputted by user as a command. Parsed for max of two potential separate strings later.
+    string current_turn_color = "White"; // Color whose turn it currently is
+    string next_turn_color = "Black";    // Color whose turn is next
+    bool draw_proposed = false;          // True if one player attempts to declare a draw
 
     // Main game loop (will loop forever unless one player quits, both players draw, or one player is put in checkmate and loses)
     for (;;)
     {
         print_board(std::cout);
 
-        std::cout << "\nIt is " << turn_color << "'s turn.\n"
+        std::cout << "\nIt is " << current_turn_color << "'s turn.\n"
                   << "Please input a command: ";
-        getline(cin, command);
-        if (command.empty())
+        getline(cin, user_command);
+        if (user_command.empty())
         {
             continue;
         }
-        transform(command.begin(), command.end(), command.begin(), ::tolower);
-        istringstream iss(command);
-        vector<string> commands{istream_iterator<string>{iss}, istream_iterator<string>{}};
+        transform(user_command.begin(), user_command.end(), user_command.begin(), ::tolower);
+        istringstream iss(user_command);
+        vector<string> parsed_commands{istream_iterator<string>{iss}, istream_iterator<string>{}};
 
-        string first = commands[0];
+        string first_command = parsed_commands[0];
 
         // If first player offers a draw
-        if (draw_agree)
+        if (draw_proposed)
         {
             // Second player has agreed to a draw, and both players forfeit the game.
-            if (first == "draw")
+            if (first_command == "draw")
             {
                 std::cout << "\nBoth sides have agreed to a draw.\n"
                           << "Nobody wins." << endl;
@@ -153,46 +150,43 @@ void Board::play_user()
             else
             {
                 std::cout << "\n"
-                          << turn_color << " disagreed to a draw.\n"
-                          << off_color << " will proceed their turn as normal." << endl;
+                          << current_turn_color << " disagreed to a draw.\n"
+                          << next_turn_color << " will proceed their turn as normal." << endl;
 
-                draw_agree = false;
-                string temp = turn_color;
-                turn_color = off_color;
-                off_color = temp;
+                draw_proposed = false;
+                swap(current_turn_color, next_turn_color);
 
                 continue;
             }
         }
 
         // Exit chess program or offer draw
-        if (first == "quit" || first == "resign")
+        if (first_command == "quit" || first_command == "resign")
         {
             std::cout << "\n"
-                      << turn_color << " has given up.\n"
-                      << off_color << " wins!" << endl;
+                      << current_turn_color << " has given up.\n"
+                      << next_turn_color << " wins!" << endl;
 
             return;
         }
 
-        else if (first == "draw" || first == "stalemate")
+        else if (first_command == "draw" || first_command == "stalemate")
         {
-            draw_agree = true;
+            draw_proposed = true;
 
             cout << "\n"
-                 << turn_color << " has declared a draw.\n"
-                 << "If " << off_color << " also declares a draw, the game will end in a draw." << endl;
-            string temp = turn_color;
-            turn_color = off_color;
-            off_color = temp;
+                 << current_turn_color << " has declared a draw.\n"
+                 << "If " << next_turn_color << " also declares a draw, the game will end in a draw." << endl;
+            swap(current_turn_color, next_turn_color);
             continue;
         }
 
         // If the command is two sets of coordinates
-        if (commands.size() > 1)
+        if (parsed_commands.size() > 1)
         {
-            string second = commands[1];
-            int move_result = move(toupper(turn_color[0]), first, second);
+            string from_coordinate = parsed_commands[0];
+            string to_coordinate = parsed_commands[1];
+            int move_result = move(toupper(current_turn_color[0]), from_coordinate, to_coordinate);
 
             // If the piece was not moved for some reason
             if (move_result == BAD)
@@ -206,7 +200,7 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                          << off_color << " is in check.\n";
+                          << next_turn_color << " is in check.\n";
             }
 
             // The enemy is in checkmate and has lost the game
@@ -215,8 +209,8 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                          << off_color << " is in checkmate.\n"
-                          << turn_color << " wins!" << endl;
+                          << next_turn_color << " is in checkmate.\n"
+                          << current_turn_color << " wins!" << endl;
 
                 return;
             }
@@ -227,7 +221,7 @@ void Board::play_user()
                 print_board(std::cout);
 
                 std::cout << "\n"
-                          << off_color << " is in stalemate.\n"
+                          << next_turn_color << " is in stalemate.\n"
                           << "Nobody wins." << endl;
 
                 return;
@@ -243,9 +237,7 @@ void Board::play_user()
         }
 
         // Necessary steps to take in order to change the turn order
-        string temp = turn_color;
-        turn_color = off_color;
-        off_color = temp;
+        swap(current_turn_color, next_turn_color);
     }
 }
 
